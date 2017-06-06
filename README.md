@@ -28,7 +28,7 @@ By plotting the distribution of transactions over the categories per month in a 
 ### Sketches
 *A visual sketch of what the application will look like for the user; if you envision the application to have multiple screens, sketch these all out separately.*
 
-![sketches](/doc/sketches.jpg "Sketches of app")
+![sketches](/doc/sketches.jpg)
 
 ### Data sources
 *What data sets and data sources will you need, how you will get the data into the right form for your app?*
