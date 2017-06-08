@@ -4,7 +4,7 @@
 ![diagram](/doc/diagram.jpg)
 
 + Advanced sketches of UI
-TODO
+See current sketches in README.md
 + List of API's and frameworks
 MPAndroidCharts
 + List of Datasources
