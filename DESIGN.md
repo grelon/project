@@ -5,8 +5,8 @@
 
 + Advanced sketches of UI
 See current sketches in README.md
-+ List of API's and frameworks
-MPAndroidCharts
++ List of API's and frameworks  
+    * MPAndroidCharts
 + List of Datasources
 The data will come from imported CSV files. A file will have the following format:
 >"Date","Amount","Account","Counterparty","Name","Description"
