@@ -4,26 +4,28 @@ Final project for Minor Programmeren
 ## Proposal
 
 ### Problem
-*What problem will be solved for the user?*
-
-Currently there are no apps that offer insight into income and expenses in the way [Grip](https://www.abnamro.nl/nl/prive/apps/grip/index.html) does. 
+*What problem will be solved for the user?*  
+If Bunq users want to explore their bankstatements to figure out where their money is going, they would have to:  
++ peruse their statements in textual form
+OR
++ download and then upload their statement to a service such as AFAS Personal.  
+This requires to much effort on the user's part to do on a daily basis.
 
 ### Features
-*What features will be available to solve the problem.*
+*What features will be available to solve the problem?*
 
-To solve the above problem, the app:
-
-+ **Easily imports bankstatements**
+To solve the above problem, the app:  
++ **Easily imports bankstatements**  
 This app will be able to open exported bankstatements directly from the Bunq app and categorize the transactions. The file type will be CSV, and the format will be "Date","Amount","Account","Counterparty","Name","Description".
 (optional): integration with the [Bunq API](https://docs.bunq.com) to automically import bankstatements.
-+ **Categorizes transactions**
++ **Categorizes transactions**  
 By default a portion of the transactions is automatically categorized using keywords in transaction descriptions
 (optional): Uncategorized or wrongly categorized can be assigned to categories manually.
 (optional): Custom categories accompanied by their respective filter can be created.
-+ **Charts transactions in overviews**
-By plotting the distribution of transactions over the categories per month in a clickable donut chart. Clicking on portions of the chart produces a new donut chart of the subcategories of that category. Transactions are the lowest level and are displayed in a list.
-(optional): Users can switch between months to see previous distributions of transactions.
-(optional): Users can compare spending between months.
++ **Charts transactions in overviews**  
+By plotting the distribution of transactions over the categories per month in a clickable donut chart. Clicking on portions of the chart produces a new donut chart of the subcategories of that category. Transactions are the lowest level and are displayed in a list.  
+(optional): Users can switch between periods (e.g. months, weeks) to see previous distributions of transactions.  
+(optional): Users can compare spending between periods (e.g. months, weeks).
 
 ### Sketches
 *A visual sketch of what the application will look like for the user; if you envision the application to have multiple screens, sketch these all out separately.*
@@ -33,7 +35,7 @@ By plotting the distribution of transactions over the categories per month in a 
 ### Data sources
 *What data sets and data sources will you need, how you will get the data into the right form for your app?*
 
-**CSV Bankstatement**
+**CSV Bankstatement**  
 The Bunq App exports bankstatements in the [UK CSV format](https://en.wikipedia.org/wiki/Comma-separated_values#Example) which will be used as data source for this app. This will be processed and sorted into a database.
 
 ### App decomposed

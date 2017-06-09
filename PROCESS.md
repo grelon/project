@@ -11,7 +11,6 @@ Current model:
 + When statements from multiple accounts are added, there needs to be a way to switch between them. Maybe create an activity for this? (optional)
 
 # Day 3
-
 **Insights**
 + The chart library doesnt have a onclicklistener for pieces of the pie. At the moment a onChartValueSelectListener is used, but this is not ideal.
 + Still to decide: what screen is the main screen?
