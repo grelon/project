@@ -3,8 +3,8 @@
 + Diagram of modules
 ![diagram](/doc/diagram.jpg)
 
-+ Advanced sketches of UI
-See current sketches in README.md
++ Advanced sketches of UI  
+![sketches](/doc/sketches.jpg)  
 + List of API's and frameworks  
     * MPAndroidCharts
 + List of Datasources
