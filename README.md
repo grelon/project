@@ -16,7 +16,7 @@ This requires to much effort on the user's part to do on a daily basis.
 
 To solve the above problem, the app:  
 + **Easily imports bankstatements**  
-This app will be able to open exported bankstatements directly from the Bunq app and categorize the transactions. The file type will be CSV, and the format will be "Date","Amount","Account","Counterparty","Name","Description".
+This app will be able to open exported bankstatements directly from the Bunq app and categorize the transactions. The file type will be CSV, and the format will be "Date","Amount","Account","Counterparty","Name","Description".  
 (optional): integration with the [Bunq API](https://docs.bunq.com) to automically import bankstatements.
 + **Categorizes transactions**  
 By default a portion of the transactions is automatically categorized using keywords in transaction descriptions
@@ -41,18 +41,16 @@ The Bunq App exports bankstatements in the [UK CSV format](https://en.wikipedia.
 ### App decomposed
 *What separate parts of the application can be defined (decomposing the problem) and how do they work together?*
 
-+ **Importer**
++ **Importer**  
 Handles the importing of a CSV bankstatement.
-+ **Categorizer**
++ **Categorizer**  
 Parses data input file, categorizes the entries, and sorts them into a database.
-+ **DB Controller**
++ **DB Controller**  
 Takes care of databse related activity.
-+ **Chart builder**
++ **Chart builder**  
 Builds a chart using the data from the DB
-+ **Activities**
++ **Activities**  
 Takes care of activity specific methods, flow, etcetera. Charts live here.
-+ **Navigator** (optional)
-Handles activity independent navigation within the app.
 
 ### External components
 *Which external components (online APIs, libraries etc.) you will need to make certain features possible (name and URL link).*
@@ -70,5 +68,5 @@ Handles activity independent navigation within the app.
 Grip is one of the few Dutch apps that solves more or less the same problem. It presents overviews using donutcharts, barcharts and linecharts. For the sake of simplicity, only the donutcharts will be used in this app for now.
 
 ### MVP defined
-*Which parts of the application define the minimum viable product (MVP) and which parts may be optional to implement.*
+*Which parts of the application define the minimum viable product (MVP) and which parts may be optional to implement.*  
 When a part is optional, it is marked as such.
