@@ -1,4 +1,13 @@
 <resources>
     <string name="app_name">Bunqer</string>
     <string name="title_activity_categories">CategoriesActivity</string>
+    <string-array name="navigation_items">
+        <item>Main</item>
+        <item>Transactions</item>
+        <item>Filters</item>
+        <item>Categories</item>
+        <item>Settings</item>
+    </string-array>
+    <string name="drawer_open">open</string>
+    <string name="drawer_close">close</string>
 </resources>

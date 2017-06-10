@@ -5,6 +5,10 @@
 
 + Advanced sketches of UI  
 ![sketches](/doc/sketches.jpg)  
+
+**sketches 10-06**  
+![sketches2](/doc/sketches2.jpg)
+
 + List of API's and frameworks  
     * MPAndroidCharts
 + List of Datasources
