@@ -1,4 +1,4 @@
-package com.example.sander.bunqer;
+package com.example.sander.bunqer.Sorter;
 /*
  * Created by sander on 11-6-17.
  */
@@ -8,7 +8,8 @@ import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.net.Uri;
 import android.util.Log;
-import android.view.View;
+
+import com.example.sander.bunqer.ModelClasses.Transaction;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -18,11 +19,19 @@ import java.util.ArrayList;
 
 public class CsvImportHelper {
 
-    public CsvImportHelper(Context context) {
-        Context context = context;
+    // constructor
+    public CsvImportHelper() {
     }
 
-    public static ArrayList<Transaction> getTransactionList(Intent receivedIntent) {
+    /**
+     * A method that processes the CSV file that is shared through a intent.action.SEND. It returns
+     * an ArrayList of Transaction objects.
+     *
+     * @param context
+     * @param receivedIntent
+     * @return
+     */
+    public static ArrayList<Transaction> getTransactionList(Context context, Intent receivedIntent) {
         ArrayList<Transaction> transactions = new ArrayList<>();
 
         Uri uri = receivedIntent.getClipData().getItemAt(0).getUri();
@@ -31,7 +40,7 @@ public class CsvImportHelper {
             FileInputStream inputStream;
             try {
                 Log.d("log", "try 1");
-                AssetFileDescriptor descriptor = getContentResolver()
+                AssetFileDescriptor descriptor = context.getContentResolver()
                         .openTypedAssetFileDescriptor(uri, "text/*", null);
                 Log.d("log", "try 2");
                 inputStream = descriptor.createInputStream();

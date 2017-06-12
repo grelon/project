@@ -1,4 +1,4 @@
-package com.example.sander.bunqer;
+package com.example.sander.bunqer.ModelClasses;
 /*
  * Created by sander on 8-6-17.
  */

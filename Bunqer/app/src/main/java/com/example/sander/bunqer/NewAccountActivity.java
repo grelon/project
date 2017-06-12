@@ -1,22 +1,15 @@
 package com.example.sander.bunqer;
 
 import android.content.Intent;
-import android.content.res.AssetFileDescriptor;
-import android.net.Uri;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import com.example.sander.bunqer.Sorter.CsvImportHelper;
+import com.example.sander.bunqer.ModelClasses.Transaction;
+
 import java.util.ArrayList;
 
 public class NewAccountActivity extends AppCompatActivity {
@@ -29,6 +22,15 @@ public class NewAccountActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_account);
         getSupportActionBar().setTitle("Add new account");
+
+        // hide unnecessary views
+        findViewById(R.id.accountname).setVisibility(View.GONE);
+        findViewById(R.id.accountnumber).setVisibility(View.GONE);
+        findViewById(R.id.pathtocsv).setVisibility(View.GONE);
+        findViewById(R.id.createAccountButton).setVisibility(View.GONE);
+
+        // testing grounds
+
 
         // get textview
         textView = (TextView) findViewById(R.id.tvTest);
@@ -44,8 +46,9 @@ public class NewAccountActivity extends AppCompatActivity {
             findViewById(R.id.pathtocsv).setVisibility(View.GONE);
             findViewById(R.id.createAccountButton).setVisibility(View.GONE);
 
+
             // get list of transaction objects
-            transactions = CsvImportHelper(this).getTransactionList(getIntent());
+            transactions = CsvImportHelper.getTransactionList(getApplicationContext(), getIntent());
 
             textView.setText(transactions.toString());
         }
