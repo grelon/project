@@ -9,6 +9,8 @@ import android.content.res.AssetFileDescriptor;
 import android.net.Uri;
 import android.util.Log;
 
+import com.example.sander.bunqer.DB.DBManager;
+import com.example.sander.bunqer.ModelClasses.Account;
 import com.example.sander.bunqer.ModelClasses.Transaction;
 
 import java.io.BufferedReader;
@@ -34,39 +36,37 @@ public class CsvImportHelper {
     public static ArrayList<Transaction> getTransactionList(Context context, Intent receivedIntent) {
         ArrayList<Transaction> transactions = new ArrayList<>();
 
+        ArrayList<Account> accounts = DBManager.getInstance(context).readAccounts();
+
         Uri uri = receivedIntent.getClipData().getItemAt(0).getUri();
         if (uri != null) {
-            Log.d("log", "uri is not null");
             FileInputStream inputStream;
             try {
-                Log.d("log", "try 1");
                 AssetFileDescriptor descriptor = context.getContentResolver()
                         .openTypedAssetFileDescriptor(uri, "text/*", null);
-                Log.d("log", "try 2");
                 inputStream = descriptor.createInputStream();
-                Log.d("log", "try 3");
                 InputStreamReader isReader = new InputStreamReader(inputStream, "UTF-8");
-                Log.d("log", "try 4");
-
-                ArrayList<String> lineArray = new ArrayList<>();
 
                 BufferedReader bReader = new BufferedReader(isReader);
+
                 // skip over first line
                 bReader.readLine();
 
                 String line;
                 while ((line = bReader.readLine()) != null) {
+
+
                     String[] rowData = line.split(";");
                     Transaction transaction = new Transaction();
                     transaction.setDate(rowData[0]);
                     transaction.setAmount(rowData[1]);
                     transaction.setAccount(rowData[2]);
-                    transaction.setCounterparty(rowData[3]);
-                    transaction.setName(rowData[4]);
+                    transaction.setAccount_id(getAccount_id(accounts, rowData[2]));
+                    transaction.setCounterparty_account(rowData[3]);
+                    transaction.setCounterparty_name(rowData[4]);
                     transaction.setDescription(rowData[5]);
                     transactions.add(transaction);
                 }
-
                 return transactions;
 
             } catch (NullPointerException e) {
@@ -79,5 +79,18 @@ public class CsvImportHelper {
         // shouldn't get here but, just to be safe
         Log.w("getTransactionList", "URI is null");
         return transactions;
+    }
+
+    private static int getAccount_id(ArrayList<Account> accounts, String account_number) {
+        // check if account already exists
+        for (Account account: accounts) {
+            if (account.getNumber().equals(account_number)) {
+                // and brand transaction with the account id
+                return account.getId();
+            }
+        }
+
+        // otherwise brand transaction with 0, to signify it is not assigned to an account
+        return 0;
     }
 }

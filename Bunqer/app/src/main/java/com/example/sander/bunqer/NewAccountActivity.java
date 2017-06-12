@@ -7,6 +7,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.sander.bunqer.DB.DBManager;
+import com.example.sander.bunqer.ModelClasses.Account;
+import com.example.sander.bunqer.ModelClasses.Category;
+import com.example.sander.bunqer.Sorter.CategoryHelper;
 import com.example.sander.bunqer.Sorter.CsvImportHelper;
 import com.example.sander.bunqer.ModelClasses.Transaction;
 
@@ -16,6 +20,7 @@ public class NewAccountActivity extends AppCompatActivity {
 
     TextView textView;
     ArrayList<Transaction> transactions;
+    DBManager dbManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +35,10 @@ public class NewAccountActivity extends AppCompatActivity {
         findViewById(R.id.createAccountButton).setVisibility(View.GONE);
 
         // testing grounds
-
+        dbManager = DBManager.getInstance(getApplicationContext());
+        Log.d("log", "accounts: " + dbManager.readAccounts().toString());
+        Log.d("log", "categories: " + dbManager.readCategories().toString());
+        Log.d("log", "transactions: " + dbManager.readTransactions().toString());
 
         // get textview
         textView = (TextView) findViewById(R.id.tvTest);
@@ -49,8 +57,16 @@ public class NewAccountActivity extends AppCompatActivity {
 
             // get list of transaction objects
             transactions = CsvImportHelper.getTransactionList(getApplicationContext(), getIntent());
-
+            Log.d("log", "transactionlist: " + transactions.toString());
+            CategoryHelper ch = new CategoryHelper(getApplicationContext());
+            ch.categorize(transactions);
             textView.setText(transactions.toString());
+
+            // testing grounds
+            dbManager = DBManager.getInstance(getApplicationContext());
+            Log.d("log", "accounts: " + dbManager.readAccounts().toString());
+            Log.d("log", "categories: " + dbManager.readCategories().toString());
+            Log.d("log", "transactions: " + dbManager.readTransactions().toString());
         }
     }
 

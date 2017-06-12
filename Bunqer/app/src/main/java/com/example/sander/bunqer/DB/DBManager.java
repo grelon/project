@@ -10,17 +10,30 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.example.sander.bunqer.ModelClasses.Account;
 import com.example.sander.bunqer.ModelClasses.Category;
+import com.example.sander.bunqer.ModelClasses.Transaction;
 
 import java.util.ArrayList;
 
 public class DBManager {
-    private DBHelper dbHelper;
-    private SQLiteDatabase db;
+    private static DBHelper dbHelper;
+    private static SQLiteDatabase db;
+    private static DBManager dbManager;
 
     // constructor
-    public DBManager(Context context) {
+    private DBManager(Context context) {
         dbHelper = DBHelper.getInstance(context);
         db = dbHelper.getWritableDatabase();
+    }
+
+    public static synchronized DBManager getInstance(Context context) {
+        if (dbManager == null) {
+            dbManager = new DBManager(context);
+        }
+        return dbManager;
+    }
+
+    private static void setupDatabase() {
+
     }
 
     // CRUD: accounts table
@@ -127,5 +140,80 @@ public class DBManager {
     public void deleteCategory(Category category) {
         db.delete(DBHelper.TABLE_CATEGORIES, DBHelper.CATEGORY_ID + " = ?",
                 new String[] {String.valueOf(category.getId())});
+    }
+
+    // CRUD: transactions table
+    public void createTransaction(Transaction transaction) {
+        ContentValues values = new ContentValues();
+        values.put(DBHelper.TRANSACTION_CATEGORY_ID, transaction.getCategory_id());
+        values.put(DBHelper.TRANSACTION_ACCOUNT_ID, transaction.getAccount_id());
+        values.put(DBHelper.TRANSACTION_DATE, transaction.getDate());
+        values.put(DBHelper.TRANSACTION_AMOUNT, transaction.getAmount());
+        values.put(DBHelper.TRANSACTION_COUNTERPARTY_ACCOUNT, transaction.getCounterparty_account());
+        values.put(DBHelper.TRANSACTION_COUNTERPARTY_NAME, transaction.getCounterparty_name());
+        values.put(DBHelper.TRANSACTION_DESCRIPTION, transaction.getDescription());
+        db.insert(DBHelper.TABLE_TRANSACTIONS, null, values);
+    }
+
+    public ArrayList<Transaction> readTransactions() {
+        ArrayList<Transaction> transactions = new ArrayList<>();
+
+        // columns to read
+        String[] columns = new String[] {
+            DBHelper.TRANSACTION_ID,
+            DBHelper.TRANSACTION_CATEGORY_ID,
+            DBHelper.TRANSACTION_ACCOUNT_ID,
+            DBHelper.TRANSACTION_DATE,
+            DBHelper.TRANSACTION_AMOUNT,
+            DBHelper.TRANSACTION_COUNTERPARTY_ACCOUNT,
+            DBHelper.TRANSACTION_COUNTERPARTY_NAME,
+            DBHelper.TRANSACTION_DESCRIPTION };
+
+        // create cursor object to read previously defined columns
+        Cursor cursor = db.query(DBHelper.TABLE_TRANSACTIONS, columns, null, null, null, null, null);
+
+        // move over rows with cursor
+        if (cursor.moveToFirst()) {
+            do {
+                // get needed data from current row
+                int id = cursor.getInt(cursor.getColumnIndex(DBHelper.TRANSACTION_ID));
+                int category_id = cursor.getInt(cursor.getColumnIndex(DBHelper.TRANSACTION_CATEGORY_ID));
+                String category_name = readCategories().get(category_id).getName();
+                int account_id = cursor.getInt(cursor.getColumnIndex(DBHelper.TRANSACTION_ACCOUNT_ID));
+                String account_name = readAccounts().get(account_id).getName();
+                String date = cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_DATE));
+                String amount = cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_AMOUNT));
+                String counterparty_account = cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_COUNTERPARTY_ACCOUNT));
+                String counterparty_name = cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_COUNTERPARTY_NAME));
+                String description = cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_DESCRIPTION));
+
+                // create category object with data
+                Transaction transaction = new Transaction(
+                        id,
+                        date,
+                        amount,
+                        account_id,
+                        account_name,
+                        category_name,
+                        category_id,
+                        counterparty_name,
+                        counterparty_account,
+                        description);
+                transactions.add(transaction);
+            }
+            // until end of cursor object has been reached
+            while (cursor.moveToNext());
+        }
+
+        // wrap up and return
+        cursor.close();
+        return transactions;
+    }
+
+    public void updateTransaction(Transaction transaction) {
+        ContentValues values = new ContentValues();
+        values.put(DBHelper.TRANSACTION_CATEGORY_ID, transaction.getCategory_id());
+        db.update(DBHelper.TABLE_TRANSACTIONS, values, DBHelper.TRANSACTION_ID + " = ?",
+                new String[] {String.valueOf(transaction.getCategory_id())});
     }
 }
