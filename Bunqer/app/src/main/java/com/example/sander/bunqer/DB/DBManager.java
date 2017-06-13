@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.example.sander.bunqer.ModelClasses.Account;
 import com.example.sander.bunqer.ModelClasses.Category;
@@ -178,9 +179,11 @@ public class DBManager {
                 // get needed data from current row
                 int id = cursor.getInt(cursor.getColumnIndex(DBHelper.TRANSACTION_ID));
                 int category_id = cursor.getInt(cursor.getColumnIndex(DBHelper.TRANSACTION_CATEGORY_ID));
-                String category_name = readCategories().get(category_id).getName();
+                Log.d("log", "category_id: " + category_id);
+                Log.d("log", "categories: " + readCategories().toString());
+                String category_name = readCategories().get(category_id-1).getName();
                 int account_id = cursor.getInt(cursor.getColumnIndex(DBHelper.TRANSACTION_ACCOUNT_ID));
-                String account_name = readAccounts().get(account_id).getName();
+                String account_name = readAccounts().get(account_id-1).getName();
                 String date = cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_DATE));
                 String amount = cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_AMOUNT));
                 String counterparty_account = cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_COUNTERPARTY_ACCOUNT));

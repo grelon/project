@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.example.sander.bunqer.DB.DBManager;
 import com.example.sander.bunqer.ModelClasses.Account;
+import com.example.sander.bunqer.ModelClasses.Category;
 import com.example.sander.bunqer.ModelClasses.Transaction;
 
 import java.io.BufferedReader;
@@ -20,6 +21,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class CsvImportHelper {
+
+    private static DBManager dbManager;
 
     // constructor
     public CsvImportHelper() {
@@ -35,8 +38,7 @@ public class CsvImportHelper {
      */
     public static ArrayList<Transaction> getTransactionList(Context context, Intent receivedIntent) {
         ArrayList<Transaction> transactions = new ArrayList<>();
-
-        ArrayList<Account> accounts = DBManager.getInstance(context).readAccounts();
+        dbManager = DBManager.getInstance(context);
 
         Uri uri = receivedIntent.getClipData().getItemAt(0).getUri();
         if (uri != null) {
@@ -54,17 +56,15 @@ public class CsvImportHelper {
 
                 String line;
                 while ((line = bReader.readLine()) != null) {
-
-
                     String[] rowData = line.split(";");
                     Transaction transaction = new Transaction();
                     transaction.setDate(rowData[0]);
                     transaction.setAmount(rowData[1]);
                     transaction.setAccount(rowData[2]);
-                    transaction.setAccount_id(getAccount_id(accounts, rowData[2]));
                     transaction.setCounterparty_account(rowData[3]);
                     transaction.setCounterparty_name(rowData[4]);
                     transaction.setDescription(rowData[5]);
+                    transaction.setAccount_id(getAccount_id(transaction));
                     transactions.add(transaction);
                 }
                 return transactions;
@@ -81,16 +81,46 @@ public class CsvImportHelper {
         return transactions;
     }
 
-    private static int getAccount_id(ArrayList<Account> accounts, String account_number) {
+    private static int getAccount_id(Transaction transaction) {
         // check if account already exists
+        ArrayList<Account> accounts = dbManager.readAccounts();
         for (Account account: accounts) {
-            if (account.getNumber().equals(account_number)) {
+            if (account.getNumber().equals(transaction.getAccount())) {
                 // and brand transaction with the account id
+                Log.d("log", "existing account");
                 return account.getId();
             }
         }
 
-        // otherwise brand transaction with 0, to signify it is not assigned to an account
-        return 0;
+        Log.d("log", "new account");
+        // otherwise setup new account
+        Account newAccount = setupAccount(transaction);
+        return newAccount.getId();
+    }
+
+    private static Account setupAccount(Transaction transaction) {
+        // create account
+        Account account = new Account(transaction.getAccount(), transaction.getAccount());
+        dbManager.createAccount(account);
+
+        // get new account from database
+        ArrayList<Account> accounts = dbManager.readAccounts();
+        Account newAccount = accounts.get(accounts.size()-1);
+
+        setupDefaultCategories(newAccount);
+
+        return accounts.get(accounts.size()-1);
+    }
+
+    private static void setupDefaultCategories(Account newAccount) {
+        // empty list of categories
+        ArrayList<Category> defaultCategories = new ArrayList<>();
+
+        // TODO: 13-6-17 Improve default categories
+        defaultCategories.add(new Category(newAccount.getId(), "Uncategorized"));
+
+        for (Category category: defaultCategories) {
+            dbManager.createCategory(category);
+        }
     }
 }
