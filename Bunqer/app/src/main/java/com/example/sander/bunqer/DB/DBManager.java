@@ -179,8 +179,6 @@ public class DBManager {
                 // get needed data from current row
                 int id = cursor.getInt(cursor.getColumnIndex(DBHelper.TRANSACTION_ID));
                 int category_id = cursor.getInt(cursor.getColumnIndex(DBHelper.TRANSACTION_CATEGORY_ID));
-                Log.d("log", "category_id: " + category_id);
-                Log.d("log", "categories: " + readCategories().toString());
                 String category_name = readCategories().get(category_id-1).getName();
                 int account_id = cursor.getInt(cursor.getColumnIndex(DBHelper.TRANSACTION_ACCOUNT_ID));
                 String account_name = readAccounts().get(account_id-1).getName();

@@ -67,7 +67,10 @@ public class CsvImportHelper {
                     transaction.setAccount_id(getAccount_id(transaction));
                     transactions.add(transaction);
                 }
-                return transactions;
+
+                // categorize transactions
+                Log.d("log","completing import");
+                return CategoryHelper.getInstance(context).categorize(transactions);
 
             } catch (NullPointerException e) {
                 Log.w("ClipData", "Failure to create stream");
@@ -77,7 +80,7 @@ public class CsvImportHelper {
         }
 
         // shouldn't get here but, just to be safe
-        Log.w("getTransactionList", "URI is null");
+        Log.e("getTransactionList", "Failed to import transactions");
         return transactions;
     }
 
@@ -87,12 +90,10 @@ public class CsvImportHelper {
         for (Account account: accounts) {
             if (account.getNumber().equals(transaction.getAccount())) {
                 // and brand transaction with the account id
-                Log.d("log", "existing account");
                 return account.getId();
             }
         }
 
-        Log.d("log", "new account");
         // otherwise setup new account
         Account newAccount = setupAccount(transaction);
         return newAccount.getId();

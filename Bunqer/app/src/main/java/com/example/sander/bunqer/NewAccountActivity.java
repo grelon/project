@@ -54,12 +54,9 @@ public class NewAccountActivity extends AppCompatActivity {
             findViewById(R.id.pathtocsv).setVisibility(View.GONE);
             findViewById(R.id.createAccountButton).setVisibility(View.GONE);
 
-
             // get list of transaction objects
             transactions = CsvImportHelper.getTransactionList(getApplicationContext(), getIntent());
             Log.d("log", "transactionlist: " + transactions.toString());
-            CategoryHelper ch = new CategoryHelper(getApplicationContext());
-            ch.categorize(transactions);
             textView.setText(transactions.toString());
 
             // testing grounds

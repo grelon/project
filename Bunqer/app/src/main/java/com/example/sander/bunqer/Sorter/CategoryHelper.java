@@ -2,7 +2,7 @@ package com.example.sander.bunqer.Sorter;
 /*
  * Created by sander on 12-6-17.
  *
- * Sorts transactions into categories.
+ * Sorts transactions into categories and actually writes them to the database for the first time.
  */
 
 
@@ -10,18 +10,40 @@ import android.content.Context;
 import android.util.Log;
 
 import com.example.sander.bunqer.DB.DBManager;
+import com.example.sander.bunqer.ModelClasses.Category;
 import com.example.sander.bunqer.ModelClasses.Transaction;
 
 import java.util.ArrayList;
 
 public class CategoryHelper {
     private static DBManager dbManager;
+    private static CategoryHelper catHelper;
 
-    public CategoryHelper(Context context) {
-        this.dbManager = DBManager.getInstance(context);
+    private CategoryHelper(Context context) {
+        dbManager = DBManager.getInstance(context);
     }
 
-    public void categorize(ArrayList<Transaction> transactions) {
+    static synchronized CategoryHelper getInstance(Context context) {
+        Log.d("log", "ch.getInstance");
+        if (catHelper == null) {
+            Log.d("log", "new instance");
+            catHelper = new CategoryHelper(context);
+        }
+        Log.d("log", "old instance");
+        return catHelper;
+    }
+
+    ArrayList<Transaction> categorize(ArrayList<Transaction> transactions) {
         Log.d("log", "start categorize()");
+        ArrayList<Category> categories = dbManager.readCategories();
+        for (Transaction transaction: transactions) {
+            // TODO: 13-6-17 write initial categorization algorithm
+            // 'uncategorized' has index 0 in list
+            transaction.setCategory_id(categories.get(0).getId());
+            transaction.setCategory(categories.get(0).getName());
+            dbManager.createTransaction(transaction);
+        }
+        return dbManager.readTransactions();
     }
+
 }
