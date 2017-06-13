@@ -6,7 +6,7 @@ package com.example.sander.bunqer.ModelClasses;
 public class Transaction {
     private int id;
     private String date;
-    private String amount;
+    private float amount;
     private int account_id;
     private String account;
     private String category;
@@ -22,7 +22,7 @@ public class Transaction {
     }
 
     // constructor for DB
-    public Transaction(int id, String date, String amount, int account_id, String account,
+    public Transaction(int id, String date, float amount, int account_id, String account,
                        String category, int category_id, String counterparty_name,
                        String counterparty_account, String description) {
         this.id = id;
@@ -85,11 +85,11 @@ public class Transaction {
         this.counterparty_account = counterparty_account;
     }
 
-    public String getAmount() {
+    public float getAmount() {
         return amount;
     }
 
-    public void setAmount(String amount) {
+    public void setAmount(float amount) {
         this.amount = amount;
     }
 

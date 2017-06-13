@@ -9,23 +9,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".NewAccountActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+        <activity android:name=".ImportActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/*" />
             </intent-filter>
         </activity>
-        <activity android:name=".MonthActivity" />
+        <activity android:name=".MonthActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".MonthSelectorActivity" />
         <activity android:name=".CategoriesActivity" />
         <activity android:name=".SubCategoriesActivity" />
         <activity android:name=".TransactionListActivity" />
-        <activity android:name=".SingleTransactionActivity"></activity>
+        <activity android:name=".SingleTransactionActivity" />
     </application>
 
 </manifest>

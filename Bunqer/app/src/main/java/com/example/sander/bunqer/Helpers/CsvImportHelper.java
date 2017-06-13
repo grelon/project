@@ -1,4 +1,4 @@
-package com.example.sander.bunqer.Sorter;
+package com.example.sander.bunqer.Helpers;
 /*
  * Created by sander on 11-6-17.
  */
@@ -56,10 +56,11 @@ public class CsvImportHelper {
 
                 String line;
                 while ((line = bReader.readLine()) != null) {
+                    line = line.replace("\"", "");
                     String[] rowData = line.split(";");
                     Transaction transaction = new Transaction();
                     transaction.setDate(rowData[0]);
-                    transaction.setAmount(rowData[1]);
+                    transaction.setAmount(Float.parseFloat(rowData[1].replace(",",".")));
                     transaction.setAccount(rowData[2]);
                     transaction.setCounterparty_account(rowData[3]);
                     transaction.setCounterparty_name(rowData[4]);
@@ -118,7 +119,8 @@ public class CsvImportHelper {
         ArrayList<Category> defaultCategories = new ArrayList<>();
 
         // TODO: 13-6-17 Improve default categories
-        defaultCategories.add(new Category(newAccount.getId(), "Uncategorized"));
+        defaultCategories.add(new Category(newAccount.getId(), "Uncategorized income"));
+        defaultCategories.add(new Category(newAccount.getId(), "Uncategorized expenses"));
 
         for (Category category: defaultCategories) {
             dbManager.createCategory(category);

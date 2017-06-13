@@ -149,7 +149,7 @@ public class DBManager {
         values.put(DBHelper.TRANSACTION_CATEGORY_ID, transaction.getCategory_id());
         values.put(DBHelper.TRANSACTION_ACCOUNT_ID, transaction.getAccount_id());
         values.put(DBHelper.TRANSACTION_DATE, transaction.getDate());
-        values.put(DBHelper.TRANSACTION_AMOUNT, transaction.getAmount());
+        values.put(DBHelper.TRANSACTION_AMOUNT, String.valueOf(transaction.getAmount()));
         values.put(DBHelper.TRANSACTION_COUNTERPARTY_ACCOUNT, transaction.getCounterparty_account());
         values.put(DBHelper.TRANSACTION_COUNTERPARTY_NAME, transaction.getCounterparty_name());
         values.put(DBHelper.TRANSACTION_DESCRIPTION, transaction.getDescription());
@@ -183,7 +183,12 @@ public class DBManager {
                 int account_id = cursor.getInt(cursor.getColumnIndex(DBHelper.TRANSACTION_ACCOUNT_ID));
                 String account_name = readAccounts().get(account_id-1).getName();
                 String date = cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_DATE));
-                String amount = cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_AMOUNT));
+
+                // format string from DB to float with a '.' as delimiter.
+                float amount = Float.parseFloat(
+                        cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_AMOUNT))
+                                .replace(",","."));
+
                 String counterparty_account = cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_COUNTERPARTY_ACCOUNT));
                 String counterparty_name = cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_COUNTERPARTY_NAME));
                 String description = cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_DESCRIPTION));

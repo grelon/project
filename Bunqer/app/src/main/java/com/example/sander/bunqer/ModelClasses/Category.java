@@ -3,6 +3,10 @@ package com.example.sander.bunqer.ModelClasses;
  * Created by sander on 12-6-17.
  */
 
+import android.util.Log;
+
+import java.util.ArrayList;
+
 public class Category {
     /**
      * Defines category class
@@ -11,6 +15,8 @@ public class Category {
     private int id;
     private int account_id;
     private String name;
+    private ArrayList<Transaction> transactions = new ArrayList<>();
+    private float totalValue = 0.00f;
 
     // constructors
     public Category(int account_id, String name) {
@@ -25,6 +31,25 @@ public class Category {
     }
 
     // setters & getters
+    public float getTotalValue() {
+        return totalValue;
+    }
+
+    public void setTotalValue(float totalValue) {
+        this.totalValue = totalValue;
+    }
+
+    public ArrayList<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(ArrayList<Transaction> transactions) {
+        this.transactions = transactions;
+        for (Transaction transaction: transactions) {
+            totalValue += transaction.getAmount();
+        }
+    }
+
     public int getId() {
         return id;
     }

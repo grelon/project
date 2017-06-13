@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.example.sander.bunqer.Helpers.ChartHelper;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
@@ -71,21 +72,8 @@ public class MonthActivity extends AppCompatActivity implements OnChartValueSele
         // chart
         PieChart pieChart = (PieChart) findViewById(R.id.monthChart);
 
-        List<PieEntry> entries = new ArrayList<>();
+        PieData data = new ChartHelper(getApplicationContext()).setupPieData();
 
-        entries.add(new PieEntry(55f, "Income"));
-        entries.add(new PieEntry(45f, "Expenses"));
-
-        PieDataSet set = new PieDataSet(entries, "Total");
-        set.setSliceSpace(2f);
-        set.setSelectionShift(0f);
-
-        ArrayList<Integer> colors = new ArrayList<>();
-        colors.add(ColorTemplate.rgb("#008000"));
-        colors.add(ColorTemplate.rgb("#ff0000"));
-
-        set.setColors(colors);
-        PieData data = new PieData(set);
         pieChart.setData(data);
         pieChart.setTouchEnabled(true);
         pieChart.setOnChartValueSelectedListener(this);

@@ -1,4 +1,4 @@
-package com.example.sander.bunqer.Sorter;
+package com.example.sander.bunqer.Helpers;
 /*
  * Created by sander on 12-6-17.
  *
@@ -38,9 +38,16 @@ public class CategoryHelper {
         ArrayList<Category> categories = dbManager.readCategories();
         for (Transaction transaction: transactions) {
             // TODO: 13-6-17 write initial categorization algorithm
-            // 'uncategorized' has index 0 in list
-            transaction.setCategory_id(categories.get(0).getId());
-            transaction.setCategory(categories.get(0).getName());
+            // to income uncategorized
+            if (transaction.getAmount() >= 0) {
+                transaction.setCategory_id(categories.get(0).getId());
+                transaction.setCategory(categories.get(0).getName());
+            }
+            // to expenses uncategorized
+            else {
+                transaction.setCategory_id(categories.get(1).getId());
+                transaction.setCategory(categories.get(1).getName());
+            }
             dbManager.createTransaction(transaction);
         }
         return dbManager.readTransactions();
