@@ -20,3 +20,10 @@ Current model:
 + Categorizer needs to be part of MVP. Host of extra activities needed for this.
 + Best way to implement app is by using a main activity that hosts fragments containing everything that is linked to in the navigation drawer. These fragments can incidentally link to activities (e.g. add, edit, etc.)
 + Categories need to be mutually exclusive to create the charts. Also, categorization can only be swift with filters. Thus well thought out mutually exclusive filter functionality is key.
+
+# 12-6
+**Insights**  
++ CSV needs to be semicolon seperated instead of comma seperated (i.e. European format) to make sure decimal numbers are parsed properly.
+
+# 13-6
++ Note to self: don't underestimate setting up databases.
