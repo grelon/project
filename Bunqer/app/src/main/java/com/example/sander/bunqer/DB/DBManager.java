@@ -183,12 +183,7 @@ public class DBManager {
                 int account_id = cursor.getInt(cursor.getColumnIndex(DBHelper.TRANSACTION_ACCOUNT_ID));
                 String account_name = readAccounts().get(account_id-1).getName();
                 String date = cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_DATE));
-
-                // format string from DB to float with a '.' as delimiter.
-                float amount = Float.parseFloat(
-                        cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_AMOUNT))
-                                .replace(",","."));
-
+                int amount = cursor.getInt(cursor.getColumnIndex(DBHelper.TRANSACTION_AMOUNT));
                 String counterparty_account = cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_COUNTERPARTY_ACCOUNT));
                 String counterparty_name = cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_COUNTERPARTY_NAME));
                 String description = cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_DESCRIPTION));

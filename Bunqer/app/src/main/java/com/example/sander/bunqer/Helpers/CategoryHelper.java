@@ -24,12 +24,9 @@ public class CategoryHelper {
     }
 
     static synchronized CategoryHelper getInstance(Context context) {
-        Log.d("log", "ch.getInstance");
         if (catHelper == null) {
-            Log.d("log", "new instance");
             catHelper = new CategoryHelper(context);
         }
-        Log.d("log", "old instance");
         return catHelper;
     }
 
@@ -38,15 +35,41 @@ public class CategoryHelper {
         ArrayList<Category> categories = dbManager.readCategories();
         for (Transaction transaction: transactions) {
             // TODO: 13-6-17 write initial categorization algorithm
-            // to income uncategorized
-            if (transaction.getAmount() >= 0) {
-                transaction.setCategory_id(categories.get(0).getId());
-                transaction.setCategory(categories.get(0).getName());
-            }
-            // to expenses uncategorized
-            else {
+            // to income
+            if (transaction.getDescription().contains("Welcome to bunq")) {
                 transaction.setCategory_id(categories.get(1).getId());
                 transaction.setCategory(categories.get(1).getName());
+            }
+
+            // to household
+            else if (transaction.getDescription().contains("IKEA") ||
+                    transaction.getDescription().contains("Albert Heijn") ||
+                    transaction.getDescription().contains("Lidl") ||
+                    transaction.getDescription().contains("AH") ||
+                    transaction.getDescription().contains("PRAXIS")) {
+                transaction.setCategory_id(categories.get(2).getId());
+                transaction.setCategory(categories.get(2).getName());
+            }
+
+            // to household
+            else if (transaction.getDescription().contains("karate")) {
+                transaction.setCategory_id(categories.get(3).getId());
+                transaction.setCategory(categories.get(3).getName());
+            }
+
+            // to household
+            else if (transaction.getDescription().contains("cafe") ||
+                    transaction.getDescription().contains("restaurant") ||
+                    transaction.getDescription().contains("Cafe") ||
+                    transaction.getDescription().contains("Restaurant")) {
+                transaction.setCategory_id(categories.get(4).getId());
+                transaction.setCategory(categories.get(4).getName());
+            }
+
+            // to uncategorized
+            else {
+                transaction.setCategory_id(categories.get(0).getId());
+                transaction.setCategory(categories.get(0).getName());
             }
             dbManager.createTransaction(transaction);
         }

@@ -16,7 +16,8 @@ public class Category {
     private int account_id;
     private String name;
     private ArrayList<Transaction> transactions = new ArrayList<>();
-    private float totalValue = 0.00f;
+    private float currentChartPercentage;
+    private int totalValue;
 
     // constructors
     public Category(int account_id, String name) {
@@ -31,11 +32,19 @@ public class Category {
     }
 
     // setters & getters
-    public float getTotalValue() {
+    public float getCurrentChartPercentage() {
+        return currentChartPercentage;
+    }
+
+    public void setCurrentChartPercentage(float currentChartPercentage) {
+        this.currentChartPercentage = currentChartPercentage;
+    }
+
+    public int getTotalValue() {
         return totalValue;
     }
 
-    public void setTotalValue(float totalValue) {
+    public void setTotalValue(int totalValue) {
         this.totalValue = totalValue;
     }
 

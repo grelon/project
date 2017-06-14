@@ -18,7 +18,10 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class CsvImportHelper {
 
@@ -60,7 +63,7 @@ public class CsvImportHelper {
                     String[] rowData = line.split(";");
                     Transaction transaction = new Transaction();
                     transaction.setDate(rowData[0]);
-                    transaction.setAmount(Float.parseFloat(rowData[1].replace(",",".")));
+                    transaction.setAmount(rowData[1]);
                     transaction.setAccount(rowData[2]);
                     transaction.setCounterparty_account(rowData[3]);
                     transaction.setCounterparty_name(rowData[4]);
@@ -119,8 +122,11 @@ public class CsvImportHelper {
         ArrayList<Category> defaultCategories = new ArrayList<>();
 
         // TODO: 13-6-17 Improve default categories
-        defaultCategories.add(new Category(newAccount.getId(), "Uncategorized income"));
-        defaultCategories.add(new Category(newAccount.getId(), "Uncategorized expenses"));
+        defaultCategories.add(new Category(newAccount.getId(), "Uncategorized"));
+        defaultCategories.add(new Category(newAccount.getId(), "Income"));
+        defaultCategories.add(new Category(newAccount.getId(), "Household"));
+        defaultCategories.add(new Category(newAccount.getId(), "Sports"));
+        defaultCategories.add(new Category(newAccount.getId(), "Eating out"));
 
         for (Category category: defaultCategories) {
             dbManager.createCategory(category);

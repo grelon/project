@@ -13,6 +13,7 @@ import android.widget.ListView;
 
 import com.example.sander.bunqer.Helpers.ChartHelper;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.DataSet;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
@@ -31,6 +32,8 @@ public class MonthActivity extends AppCompatActivity implements OnChartValueSele
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
+    private ChartHelper mChartHelper;
+    private PieChart mPieChart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,23 +72,28 @@ public class MonthActivity extends AppCompatActivity implements OnChartValueSele
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
-        // chart
-        PieChart pieChart = (PieChart) findViewById(R.id.monthChart);
+        buildChart();
+    }
 
-        PieData data = new ChartHelper(getApplicationContext()).setupPieData();
+    private void buildChart() {
+        mPieChart = (PieChart) findViewById(R.id.monthChart);
+        mChartHelper = new ChartHelper(getApplicationContext());
 
-        pieChart.setData(data);
-        pieChart.setTouchEnabled(true);
-        pieChart.setOnChartValueSelectedListener(this);
-        pieChart.invalidate();
-        // end of chart
+        // get data
+        PieData data = mChartHelper.setupPieData();
+
+        mPieChart.setData(data);
+        mPieChart.setTouchEnabled(true);
+        mPieChart.setOnChartValueSelectedListener(this);
+        mPieChart.invalidate();
     }
 
     @Override
     public void onValueSelected(Entry e, Highlight h) {
-        // hardcoded intent towards CategoriesActivity
-        Intent toCategoriesIntent = new Intent(getApplicationContext(), CategoriesActivity.class);
-        startActivity(toCategoriesIntent);
+//        PieDataSet newSet = mChartHelper.rebuildData(e, mPieChart);
+//
+//        mPieChart.getData().removeDataSet(0);
+//        mPieChart.getData().setDataSet(newSet);
     }
 
     @Override
