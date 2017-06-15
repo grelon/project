@@ -3,6 +3,8 @@ package com.example.sander.bunqer;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -16,14 +18,21 @@ import java.util.ArrayList;
 
 public class TransactionListActivity extends AppCompatActivity {
 
+    LinearLayoutManager mLayoutManager;
+    RecyclerView mRvTransactionList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transaction_list);
 
-        ArrayList<Transaction> transactions;
+        mRvTransactionList = (RecyclerView) findViewById(R.id.transactionList);
+        mLayoutManager = new LinearLayoutManager(this);
+        mRvTransactionList.setLayoutManager(mLayoutManager);
 
-        ListView lvTransactionList = (ListView) findViewById(R.id.transactionList);
+
+
+        ArrayList<Transaction> transactions;
 
         // got here with specific category in mind
         if (getIntent().getExtras().getSerializable("category") != null) {
@@ -36,12 +45,9 @@ public class TransactionListActivity extends AppCompatActivity {
             transactions = DBManager.getInstance(this).readTransactions();
         }
 
-        TransactionListAdapter transactionListAdapter
 
-        ArrayAdapter<String> transactionArrayAdapter = new ArrayAdapter<String>(
-                getApplicationContext(), android.R.layout.simple_list_item_1, transactions);
 
-        lvTransactionList.setAdapter(transactionArrayAdapter);
+
         lvTransactionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
