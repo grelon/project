@@ -7,7 +7,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.example.sander.bunqer.ModelClasses.Account;
 import com.example.sander.bunqer.ModelClasses.Category;
@@ -93,7 +92,7 @@ public class DBManager {
     // CRUD: categories table
     public void createCategory(Category category) {
         ContentValues values = new ContentValues();
-        values.put(DBHelper.CATEGORY_ACCOUNT_ID, category.getAccount_id());
+        values.put(DBHelper.CATEGORY_ACCOUNT_ID, category.getAccountId());
         values.put(DBHelper.CATEGORY_NAME, category.getName());
         db.insert(DBHelper.TABLE_CATEGORIES, null, values);
     }
@@ -120,6 +119,7 @@ public class DBManager {
 
                 // create category object with data
                 Category category = new Category(id, account_id, name);
+
                 categories.add(category);
             }
             // until end of cursor object has been reached
@@ -146,7 +146,7 @@ public class DBManager {
     // CRUD: transactions table
     public void createTransaction(Transaction transaction) {
         ContentValues values = new ContentValues();
-        values.put(DBHelper.TRANSACTION_CATEGORY_ID, transaction.getCategory_id());
+        values.put(DBHelper.TRANSACTION_CATEGORY_ID, transaction.getCategoryId());
         values.put(DBHelper.TRANSACTION_ACCOUNT_ID, transaction.getAccount_id());
         values.put(DBHelper.TRANSACTION_DATE, transaction.getDate());
         values.put(DBHelper.TRANSACTION_AMOUNT, String.valueOf(transaction.getAmount()));
@@ -213,8 +213,8 @@ public class DBManager {
 
     public void updateTransaction(Transaction transaction) {
         ContentValues values = new ContentValues();
-        values.put(DBHelper.TRANSACTION_CATEGORY_ID, transaction.getCategory_id());
+        values.put(DBHelper.TRANSACTION_CATEGORY_ID, transaction.getCategoryId());
         db.update(DBHelper.TABLE_TRANSACTIONS, values, DBHelper.TRANSACTION_ID + " = ?",
-                new String[] {String.valueOf(transaction.getCategory_id())});
+                new String[] {String.valueOf(transaction.getCategoryId())});
     }
 }

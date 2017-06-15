@@ -126,7 +126,7 @@ public class CsvImportHelper {
         defaultCategories.add(new Category(newAccount.getId(), "Income"));
         defaultCategories.add(new Category(newAccount.getId(), "Household"));
         defaultCategories.add(new Category(newAccount.getId(), "Sports"));
-        defaultCategories.add(new Category(newAccount.getId(), "Eating out"));
+        defaultCategories.add(new Category(newAccount.getId(), "Food and drinks"));
 
         for (Category category: defaultCategories) {
             dbManager.createCategory(category);

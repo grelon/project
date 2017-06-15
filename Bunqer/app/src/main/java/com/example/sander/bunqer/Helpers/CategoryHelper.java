@@ -43,23 +43,24 @@ public class CategoryHelper {
 
             // to household
             else if (transaction.getDescription().contains("IKEA") ||
+                    transaction.getDescription().contains("PRAXIS") ||
                     transaction.getDescription().contains("Albert Heijn") ||
                     transaction.getDescription().contains("Lidl") ||
-                    transaction.getDescription().contains("AH") ||
-                    transaction.getDescription().contains("PRAXIS")) {
+                    transaction.getDescription().contains("AH")) {
                 transaction.setCategory_id(categories.get(2).getId());
                 transaction.setCategory(categories.get(2).getName());
             }
 
-            // to household
+            // to sports
             else if (transaction.getDescription().contains("karate")) {
                 transaction.setCategory_id(categories.get(3).getId());
                 transaction.setCategory(categories.get(3).getName());
             }
 
-            // to household
+            // to food and drinks
             else if (transaction.getDescription().contains("cafe") ||
                     transaction.getDescription().contains("restaurant") ||
+                    transaction.getDescription().contains("UvA") ||
                     transaction.getDescription().contains("Cafe") ||
                     transaction.getDescription().contains("Restaurant")) {
                 transaction.setCategory_id(categories.get(4).getId());

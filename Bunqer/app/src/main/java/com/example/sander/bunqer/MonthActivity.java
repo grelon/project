@@ -90,10 +90,16 @@ public class MonthActivity extends AppCompatActivity implements OnChartValueSele
 
     @Override
     public void onValueSelected(Entry e, Highlight h) {
-//        PieDataSet newSet = mChartHelper.rebuildData(e, mPieChart);
-//
-//        mPieChart.getData().removeDataSet(0);
-//        mPieChart.getData().setDataSet(newSet);
+        PieDataSet newSet = mChartHelper.rebuildData((PieEntry) e, mPieChart);
+
+        // change datasets
+        mPieChart.getData().removeDataSet(0);
+        mPieChart.getData().setDataSet(newSet);
+
+        // update chart with new dataset
+        mPieChart.getData().notifyDataChanged();
+        mPieChart.notifyDataSetChanged();
+        mPieChart.invalidate();
     }
 
     @Override

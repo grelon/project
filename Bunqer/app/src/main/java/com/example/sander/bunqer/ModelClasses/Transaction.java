@@ -53,7 +53,7 @@ public class Transaction {
         this.category = category;
     }
 
-    public int getCategory_id() {
+    public int getCategoryId() {
         return category_id;
     }
 
