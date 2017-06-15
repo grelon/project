@@ -123,7 +123,7 @@ public class CsvImportHelper {
 
         // TODO: 13-6-17 Improve default categories
         defaultCategories.add(new Category(newAccount.getId(), "Uncategorized"));
-        defaultCategories.add(new Category(newAccount.getId(), "Income"));
+        defaultCategories.add(new Category(newAccount.getId(), "Gift"));
         defaultCategories.add(new Category(newAccount.getId(), "Household"));
         defaultCategories.add(new Category(newAccount.getId(), "Sports"));
         defaultCategories.add(new Category(newAccount.getId(), "Food and drinks"));

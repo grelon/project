@@ -6,13 +6,13 @@ package com.example.sander.bunqer.Helpers;
  */
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import com.example.sander.bunqer.DB.DBManager;
 import com.example.sander.bunqer.ModelClasses.Category;
-import com.example.sander.bunqer.ModelClasses.Transaction;
+import com.example.sander.bunqer.TransactionListActivity;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -23,11 +23,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class ChartHelper {
-    private ArrayList<Transaction> transactions;
     private ArrayList<Category> categories;
     private DBManager dbManager;
-    private float mExpensesPercentage;
-    private float mIncomePercentage;
     private Context context;
 
     public ChartHelper(Context context) {
@@ -36,32 +33,37 @@ public class ChartHelper {
     }
 
     public PieData setupPieData() {
-        transactions = dbManager.readTransactions();
         categories = dbManager.readCategories();
 
         // assert if there is data
         if (categories.size() > 0) {
             List<PieEntry> entries = new ArrayList<>();
 
-            float incomeTotal = 0.00f;
-            float expensesTotal = 0.00f;
-            for (Transaction transaction:transactions) {
-                if (transaction.getCategoryId() == 2) {
-                    incomeTotal += transaction.getAmount();
+            ArrayList<Category> incomeCategories = new ArrayList<>();
+            ArrayList<Category> expensesCategories = new ArrayList<>();
+
+            int incomeTotal = 0;
+            int expensesTotal = 0;
+
+            for (Category category:categories) {
+                if (category.getId() == 2) {
+                    incomeTotal += category.getTotalValue(context);
+                    incomeCategories.add(category);
                 }
                 else {
-                    expensesTotal += transaction.getAmount();
+                    expensesTotal += category.getTotalValue(context);
+                    expensesCategories.add(category);
                 }
             }
 
+            // calculate percentages for chart
             expensesTotal = -expensesTotal;
+            int total = incomeTotal + expensesTotal;
+            float mIncomePercentage = (incomeTotal / total * 100f);
+            float mExpensesPercentage = (expensesTotal / total * 100f);
 
-            float total = incomeTotal + expensesTotal;
-            mIncomePercentage = (incomeTotal/total*100f);
-            mExpensesPercentage = (expensesTotal/total*100f);
-
-            entries.add(new PieEntry(mIncomePercentage, categories.get(1).getName()));
-            entries.add(new PieEntry(mExpensesPercentage, "Expenses"));
+            entries.add(new PieEntry(mIncomePercentage, "Income", incomeCategories));
+            entries.add(new PieEntry(mExpensesPercentage, "Expenses", expensesCategories));
 
             PieDataSet set = new PieDataSet(entries, "Total");
             set.setSliceSpace(2f);
@@ -72,40 +74,37 @@ public class ChartHelper {
             colors.add(ColorTemplate.rgb("#008000"));
             // red
             colors.add(ColorTemplate.rgb("#ff0000"));
-
             set.setColors(colors);
-            PieData data = new PieData(set);
 
-            return data;
+            return new PieData(set);
         }
         return null;
     }
 
-    public PieDataSet rebuildData(PieEntry selectedEntry, PieChart pieChart) {
+    public PieDataSet rebuildDataset(PieEntry selectedEntry, PieChart pieChart) {
         ArrayList<Category> currentCategories = new ArrayList<>();
         int currentCategoriesTotal = 0;
 
         // when expenses has been selected
-        if (mExpensesPercentage == selectedEntry.getY()) {
+        if (Objects.equals("Expenses", selectedEntry.getLabel())) {
             // get all entries from dataset and remove them
             List<PieEntry> entries = pieChart.getData().getDataSet().getEntriesForXValue(0);
             entries.clear();
 
-            // add all categories, except income, to current categories
-            for (Category category:categories) {
-                if (category.getId() != 2) {
-                    category.updateTransactions(context);
-                    currentCategoriesTotal += category.getTotalValue();
-                    if (category.getTotalValue() < 0) {
-                        currentCategories.add(category);
-                    }
+            // add all categories in entry
+            for (Category category:(ArrayList<Category>) selectedEntry.getData()) {
+                int totalValue = category.getTotalValue(context);
+                if (totalValue != 0) {
+                    currentCategories.add(category);
+                    currentCategoriesTotal += totalValue;
                 }
             }
 
             // add entries to list
             for (Category category:currentCategories) {
-                PieEntry entry = new PieEntry((float)category.getTotalValue()/currentCategoriesTotal*100, category.getName(), category);
-                entries.add(entry);
+                entries.add(new PieEntry(
+                        (float)category.getTotalValue(context) / currentCategoriesTotal*100,
+                        category.getName(), category));
             }
 
             PieDataSet set = new PieDataSet(entries, "Expenses");
@@ -116,21 +115,44 @@ public class ChartHelper {
             return set;
         }
         // when income has been selected
-        else if (mIncomePercentage == selectedEntry.getY()) {
+        else if (Objects.equals("Income", selectedEntry.getLabel())) {
             Log.d("log", "income selected");
-            return null;
+
+            // get all entries from dataset and remove them
+            List<PieEntry> entries = pieChart.getData().getDataSet().getEntriesForXValue(0);
+            entries.clear();
+
+            // add all categories in entry
+            for (Category category:(ArrayList<Category>) selectedEntry.getData()) {
+                int totalValue = category.getTotalValue(context);
+                if (totalValue != 0) {
+                    currentCategories.add(category);
+                    currentCategoriesTotal += totalValue;
+                }
+            }
+
+            // add entries to list
+            for (Category category:currentCategories) {
+                entries.add(new PieEntry(
+                        (float)category.getTotalValue(context) / currentCategoriesTotal*100,
+                        category.getName(), category));
+            }
+
+            PieDataSet set = new PieDataSet(entries, "Income");
+            set.setSliceSpace(2f);
+            set.setSelectionShift(0f);
+            set.setColors(ColorTemplate.MATERIAL_COLORS);
+
+            return set;
         }
 
         // when a category has been selected
         else {
-            Category selectedCategory = null;
-            for (Category category:categories) {
-                if (Objects.equals(category.getName(), selectedEntry.getLabel())) {
-                    selectedCategory = category;
-                    Log.d("log", selectedCategory.getName() +" has been selected");
-                }
-            }
-            return null;
+            Category category = (Category) selectedEntry.getData();
+            Intent toTransactionList = new Intent(context, TransactionListActivity.class);
+            toTransactionList.putExtra("category", category);
+            context.startActivity(toTransactionList);
         }
+    return null;
     }
 }

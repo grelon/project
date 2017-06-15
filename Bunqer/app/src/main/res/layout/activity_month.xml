@@ -11,7 +11,7 @@
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.example.sander.bunqer.MonthActivity">
+        tools:context="com.example.sander.bunqer.ChartActivity">
 
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/monthChart"

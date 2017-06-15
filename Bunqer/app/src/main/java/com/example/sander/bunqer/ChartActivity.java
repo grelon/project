@@ -1,32 +1,25 @@
 package com.example.sander.bunqer;
 
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.example.sander.bunqer.Helpers.ChartHelper;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.data.DataSet;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.github.mikephil.charting.utils.ColorTemplate;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
-public class MonthActivity extends AppCompatActivity implements OnChartValueSelectedListener {
+public class ChartActivity extends AppCompatActivity implements OnChartValueSelectedListener {
 
     private String[] mNavigationItems;
     private DrawerLayout mDrawerLayout;
@@ -89,17 +82,19 @@ public class MonthActivity extends AppCompatActivity implements OnChartValueSele
     }
 
     @Override
-    public void onValueSelected(Entry e, Highlight h) {
-        PieDataSet newSet = mChartHelper.rebuildData((PieEntry) e, mPieChart);
+    public void onValueSelected(Entry entry, Highlight h) {
+        PieDataSet newSet = mChartHelper.rebuildDataset((PieEntry) entry, mPieChart);
 
-        // change datasets
-        mPieChart.getData().removeDataSet(0);
-        mPieChart.getData().setDataSet(newSet);
+        if (newSet != null) {
+            // change datasets
+            mPieChart.getData().removeDataSet(0);
+            mPieChart.getData().setDataSet(newSet);
 
-        // update chart with new dataset
-        mPieChart.getData().notifyDataChanged();
-        mPieChart.notifyDataSetChanged();
-        mPieChart.invalidate();
+            // update chart with new dataset
+            mPieChart.getData().notifyDataChanged();
+            mPieChart.notifyDataSetChanged();
+            mPieChart.invalidate();
+        }
     }
 
     @Override

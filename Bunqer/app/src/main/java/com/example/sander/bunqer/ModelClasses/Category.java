@@ -7,9 +7,10 @@ import android.content.Context;
 
 import com.example.sander.bunqer.DB.DBManager;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Category {
+public class Category implements Serializable {
     /**
      * Defines category class
      */
@@ -17,7 +18,7 @@ public class Category {
     private int id;
     private int accountId;
     private String name;
-    private ArrayList<Transaction> transactions = new ArrayList<>();
+    private ArrayList<Transaction> transactions;
     private int totalValue;
 
     // constructors
@@ -33,7 +34,12 @@ public class Category {
     }
 
     // setters & getters
-    public int getTotalValue() {
+    public int getTotalValue(Context context) {
+        // if the transactions haven't been assigned to categories yet
+        if (transactions == null) {
+            updateTransactions(context);
+        }
+
         totalValue = 0;
         for (Transaction transaction:getTransactions()) {
             totalValue += transaction.getAmount();
@@ -51,16 +57,6 @@ public class Category {
 
     public void setTransactions(ArrayList<Transaction> transactions) {
         this.transactions = transactions;
-    }
-
-    public void updateTransactions(Context context) {
-        // iterate over every transaction and add them if they belong to this category
-        transactions.clear();
-        for (Transaction transaction:DBManager.getInstance(context).readTransactions()) {
-            if (transaction.getCategoryId() == this.getId()) {
-                transactions.add(transaction);
-            }
-        }
     }
 
     public int getId() {
@@ -87,7 +83,22 @@ public class Category {
         this.name = name;
     }
 
-    // tostring
+    // other
+    private void updateTransactions(Context context) {
+        // if transaction has not yet been initialized
+        if (transactions == null) {
+            transactions = new ArrayList<>();
+        }
+
+        // iterate over every transaction and add them if they belong to this category
+        transactions.clear();
+        for (Transaction transaction:DBManager.getInstance(context).readTransactions()) {
+            if (transaction.getCategoryId() == this.getId()) {
+                transactions.add(transaction);
+            }
+        }
+    }
+
     @Override
     public String toString() {
         return "Category{" +

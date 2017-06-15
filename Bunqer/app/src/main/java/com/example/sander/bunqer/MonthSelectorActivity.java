@@ -3,8 +3,6 @@ package com.example.sander.bunqer;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -44,8 +42,8 @@ public class MonthSelectorActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                // hardcoded intent towards MonthActivity
-                Intent toMonthIntent = new Intent(getApplicationContext(), MonthActivity.class);
+                // hardcoded intent towards ChartActivity
+                Intent toMonthIntent = new Intent(getApplicationContext(), ChartActivity.class);
                 startActivity(toMonthIntent);
             }
         });

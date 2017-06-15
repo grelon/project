@@ -58,7 +58,7 @@ public class ImportActivity extends AppCompatActivity {
     }
 
     public void sendToMonth() {
-        Intent toMonthIntent = new Intent(this, MonthActivity.class);
+        Intent toMonthIntent = new Intent(this, ChartActivity.class);
         startActivity(toMonthIntent);
         finish();
     }
