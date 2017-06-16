@@ -59,8 +59,8 @@ public class ChartHelper {
             // calculate percentages for chart
             expensesTotal = -expensesTotal;
             int total = incomeTotal + expensesTotal;
-            float mIncomePercentage = (incomeTotal / total * 100f);
-            float mExpensesPercentage = (expensesTotal / total * 100f);
+            float mIncomePercentage = (incomeTotal*100.0f) / total;
+            float mExpensesPercentage = (expensesTotal*100.0f) / total;
 
             entries.add(new PieEntry(mIncomePercentage, "Income", incomeCategories));
             entries.add(new PieEntry(mExpensesPercentage, "Expenses", expensesCategories));

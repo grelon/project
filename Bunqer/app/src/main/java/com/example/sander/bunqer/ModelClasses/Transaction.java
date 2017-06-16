@@ -3,7 +3,9 @@ package com.example.sander.bunqer.ModelClasses;
  * Created by sander on 8-6-17.
  */
 
-public class Transaction {
+import java.io.Serializable;
+
+public class Transaction implements Serializable {
     private int id;
     private String date;
     private int amount;
