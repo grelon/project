@@ -27,3 +27,17 @@ Current model:
 
 # 13-6
 + Note to self: don't underestimate setting up databases.
+
+# 16-6
+Spoils of the week:  
++ CSV's from Bunq app are be processed and written to DB
++ Income/Expenses and Categories chart are build with DB data
++ Categorization is currently done by checking for hardcoded strings
++ When no subcategories are present, user is send from chart to transactionlist
+
+**Insights**  
++ Do NOT use floats for representation of currency. Floating point imprecision catches up earlier than you would expect.
++ Recyclerviews are more difficult to implement than ListViews, but it's worth it for long lists.
++ PieEntries can be passed Objects (such as category objects) which can come in handy.
++ A lot of unnecessary data is currently read from DB during queries. Figure out a way to make flexible CRUD methods (i.e. with where clauses and the like). This doesn't have priority since there the runtime of the current DB queries isn't noticable yet.
+
