@@ -3,18 +3,20 @@ package com.example.sander.bunqer.ModelClasses;
  * Created by sander on 8-6-17.
  */
 
+import com.example.sander.bunqer.DB.DBManager;
+
 import java.io.Serializable;
 
 public class Transaction implements Serializable {
     private int id;
     private String date;
     private int amount;
-    private int account_id;
+    private int accountId;
     private String account;
     private String category;
-    private int category_id;
-    private String counterparty_name;
-    private String counterparty_account;
+    private int categoryId;
+    private String counterpartyName;
+    private String counterpartyAccount;
     private String description;
 
     // constructor for CSV import
@@ -24,18 +26,17 @@ public class Transaction implements Serializable {
     }
 
     // constructor for DB
-    public Transaction(int id, String date, int amount, int account_id, String account,
-                       String category, int category_id, String counterparty_name,
-                       String counterparty_account, String description) {
+    public Transaction(int id, String date, int amount, int accountId, String account,
+                       int categoryId, String counterpartyName,
+                       String counterpartyAccount, String description) {
         this.id = id;
         this.date = date;
         this.amount = amount;
-        this.account_id = account_id;
+        this.accountId = accountId;
         this.account = account;
-        this.category = category;
-        this.category_id = category_id;
-        this.counterparty_name = counterparty_name;
-        this.counterparty_account = counterparty_account;
+        this.categoryId = categoryId;
+        this.counterpartyName = counterpartyName;
+        this.counterpartyAccount = counterpartyAccount;
         this.description = description;
     }
 
@@ -47,44 +48,49 @@ public class Transaction implements Serializable {
         this.id = id;
     }
 
+    /**
+     * Category name is assigned when first called upon only, to prevent an infinite loop when
+     * creating categories from database.
+     *
+     * @return
+     */
     public String getCategory() {
+        if (category == null) {
+            category = DBManager.getInstance().readCategories(categoryId).get(0).getName();
+        }
         return category;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
     public int getCategoryId() {
-        return category_id;
+        return categoryId;
     }
 
-    public void setCategory_id(int category_id) {
-        this.category_id = category_id;
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
     }
 
-    public int getAccount_id() {
-        return account_id;
+    public int getAccountId() {
+        return accountId;
     }
 
-    public void setAccount_id(int account_id) {
-        this.account_id = account_id;
+    public void setAccountId(int accountId) {
+        this.accountId = accountId;
     }
 
-    public String getCounterparty_name() {
-        return counterparty_name;
+    public String getCounterpartyName() {
+        return counterpartyName;
     }
 
-    public void setCounterparty_name(String counterparty_name) {
-        this.counterparty_name = counterparty_name;
+    public void setCounterpartyName(String counterpartyName) {
+        this.counterpartyName = counterpartyName;
     }
 
-    public String getCounterparty_account() {
-        return counterparty_account;
+    public String getCounterpartyAccount() {
+        return counterpartyAccount;
     }
 
-    public void setCounterparty_account(String counterparty_account) {
-        this.counterparty_account = counterparty_account;
+    public void setCounterpartyAccount(String counterpartyAccount) {
+        this.counterpartyAccount = counterpartyAccount;
     }
 
     public int getAmount() {
@@ -129,12 +135,12 @@ public class Transaction implements Serializable {
                 "id=" + id +
                 ", date='" + date + '\'' +
                 ", amount='" + amount + '\'' +
-                ", account_id=" + account_id +
+                ", accountId=" + accountId +
                 ", account='" + account + '\'' +
                 ", category='" + category + '\'' +
-                ", category_id=" + category_id +
-                ", counterparty_name='" + counterparty_name + '\'' +
-                ", counterparty_account='" + counterparty_account + '\'' +
+                ", categoryId=" + categoryId +
+                ", counterpartyName='" + counterpartyName + '\'' +
+                ", counterpartyAccount='" + counterpartyAccount + '\'' +
                 ", description='" + description + '\'' +
                 '}';
     }

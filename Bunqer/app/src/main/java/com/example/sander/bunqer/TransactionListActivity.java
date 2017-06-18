@@ -36,7 +36,7 @@ public class TransactionListActivity extends AppCompatActivity {
 
         // got here without specific category in mind
         else {
-            transactions = DBManager.getInstance(this).readTransactions();
+            transactions = DBManager.getInstance().readTransactions(null);
         }
 
         mAdapter = new TransactionRecyclerAdapter(transactions);

@@ -28,12 +28,12 @@ public class ChartHelper {
     private Context context;
 
     public ChartHelper(Context context) {
-        dbManager = DBManager.getInstance(context);
+        dbManager = DBManager.getInstance();
         this.context = context;
     }
 
     public PieData setupPieData() {
-        categories = dbManager.readCategories();
+        categories = dbManager.readCategories(null);
 
         // assert if there is data
         if (categories.size() > 0) {
@@ -47,11 +47,11 @@ public class ChartHelper {
 
             for (Category category:categories) {
                 if (category.getId() == 2) {
-                    incomeTotal += category.getTotalValue(context);
+                    incomeTotal += category.getTotalValue();
                     incomeCategories.add(category);
                 }
                 else {
-                    expensesTotal += category.getTotalValue(context);
+                    expensesTotal += category.getTotalValue();
                     expensesCategories.add(category);
                 }
             }
@@ -93,7 +93,7 @@ public class ChartHelper {
 
             // add all categories in entry
             for (Category category:(ArrayList<Category>) selectedEntry.getData()) {
-                int totalValue = category.getTotalValue(context);
+                int totalValue = category.getTotalValue();
                 if (totalValue != 0) {
                     currentCategories.add(category);
                     currentCategoriesTotal += totalValue;
@@ -103,7 +103,7 @@ public class ChartHelper {
             // add entries to list
             for (Category category:currentCategories) {
                 entries.add(new PieEntry(
-                        (float)category.getTotalValue(context) / currentCategoriesTotal*100,
+                        (float)category.getTotalValue() / currentCategoriesTotal*100,
                         category.getName(), category));
             }
 
@@ -124,7 +124,7 @@ public class ChartHelper {
 
             // add all categories in entry
             for (Category category:(ArrayList<Category>) selectedEntry.getData()) {
-                int totalValue = category.getTotalValue(context);
+                int totalValue = category.getTotalValue();
                 if (totalValue != 0) {
                     currentCategories.add(category);
                     currentCategoriesTotal += totalValue;
@@ -134,7 +134,7 @@ public class ChartHelper {
             // add entries to list
             for (Category category:currentCategories) {
                 entries.add(new PieEntry(
-                        (float)category.getTotalValue(context) / currentCategoriesTotal*100,
+                        (float)category.getTotalValue() / currentCategoriesTotal*100,
                         category.getName(), category));
             }
 

@@ -34,10 +34,10 @@ public class Category implements Serializable {
     }
 
     // setters & getters
-    public int getTotalValue(Context context) {
+    public int getTotalValue() {
         // if the transactions haven't been assigned to categories yet
         if (transactions == null) {
-            updateTransactions(context);
+            updateTransactions();
         }
 
         totalValue = 0;
@@ -84,7 +84,7 @@ public class Category implements Serializable {
     }
 
     // other
-    private void updateTransactions(Context context) {
+    private void updateTransactions() {
         // if transaction has not yet been initialized
         if (transactions == null) {
             transactions = new ArrayList<>();
@@ -92,10 +92,8 @@ public class Category implements Serializable {
 
         // iterate over every transaction and add them if they belong to this category
         transactions.clear();
-        for (Transaction transaction:DBManager.getInstance(context).readTransactions()) {
-            if (transaction.getCategoryId() == this.getId()) {
-                transactions.add(transaction);
-            }
+        for (Transaction transaction:DBManager.getInstance().readTransactions(id)) {
+            transactions.add(transaction);
         }
     }
 

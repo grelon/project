@@ -4,7 +4,6 @@ package com.example.sander.bunqer.DB;
  */
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -20,14 +19,14 @@ public class DBManager {
     private static DBManager dbManager;
 
     // constructor
-    private DBManager(Context context) {
-        dbHelper = DBHelper.getInstance(context);
+    private DBManager() {
+        dbHelper = DBHelper.getInstance();
         db = dbHelper.getWritableDatabase();
     }
 
-    public static synchronized DBManager getInstance(Context context) {
+    public static synchronized DBManager getInstance() {
         if (dbManager == null) {
-            dbManager = new DBManager(context);
+            dbManager = new DBManager();
         }
         return dbManager;
     }
@@ -97,7 +96,7 @@ public class DBManager {
         db.insert(DBHelper.TABLE_CATEGORIES, null, values);
     }
 
-    public ArrayList<Category> readCategories() {
+    public ArrayList<Category> readCategories(Integer categoryId) {
         ArrayList<Category> categories = new ArrayList<>();
 
         // columns to read
@@ -106,19 +105,31 @@ public class DBManager {
                 DBHelper.CATEGORY_ACCOUNT_ID,
                 DBHelper.CATEGORY_NAME };
 
-        // create cursor object to read previously defined columns
-        Cursor cursor = db.query(DBHelper.TABLE_CATEGORIES, columns, null, null, null, null, null);
+        Cursor cursor;
+        if (categoryId == null) {
+            // create cursor object to read previously defined columns
+            cursor = db.query(DBHelper.TABLE_CATEGORIES, columns, null, null, null, null, null);
+        }
+        else {
+            // create cursor object to read previously defined columns only where categoryId is categoryID
+            cursor = db.query(DBHelper.TABLE_TRANSACTIONS, columns,
+                    DBHelper.CATEGORY_ID + " = ?", new String[]{categoryId.toString()},
+                    null, null, null);
+        }
 
         // move over rows with cursor
         if (cursor.moveToFirst()) {
             do {
                 // get needed data from current row
                 int id = cursor.getInt(cursor.getColumnIndex(DBHelper.CATEGORY_ID));
-                int account_id = cursor.getInt(cursor.getColumnIndex(DBHelper.CATEGORY_ACCOUNT_ID));
+                int accountId = cursor.getInt(cursor.getColumnIndex(DBHelper.CATEGORY_ACCOUNT_ID));
                 String name = cursor.getString(cursor.getColumnIndex(DBHelper.CATEGORY_NAME));
 
                 // create category object with data
-                Category category = new Category(id, account_id, name);
+                Category category = new Category(id, accountId, name);
+
+                // fill category with transactions
+                category.setTransactions(readTransactions(category.getId()));
 
                 categories.add(category);
             }
@@ -147,16 +158,23 @@ public class DBManager {
     public void createTransaction(Transaction transaction) {
         ContentValues values = new ContentValues();
         values.put(DBHelper.TRANSACTION_CATEGORY_ID, transaction.getCategoryId());
-        values.put(DBHelper.TRANSACTION_ACCOUNT_ID, transaction.getAccount_id());
+        values.put(DBHelper.TRANSACTION_ACCOUNT_ID, transaction.getAccountId());
         values.put(DBHelper.TRANSACTION_DATE, transaction.getDate());
         values.put(DBHelper.TRANSACTION_AMOUNT, String.valueOf(transaction.getAmount()));
-        values.put(DBHelper.TRANSACTION_COUNTERPARTY_ACCOUNT, transaction.getCounterparty_account());
-        values.put(DBHelper.TRANSACTION_COUNTERPARTY_NAME, transaction.getCounterparty_name());
+        values.put(DBHelper.TRANSACTION_COUNTERPARTY_ACCOUNT, transaction.getCounterpartyAccount());
+        values.put(DBHelper.TRANSACTION_COUNTERPARTY_NAME, transaction.getCounterpartyName());
         values.put(DBHelper.TRANSACTION_DESCRIPTION, transaction.getDescription());
         db.insert(DBHelper.TABLE_TRANSACTIONS, null, values);
     }
 
-    public ArrayList<Transaction> readTransactions() {
+    /**
+     * Returns all transactions if 'null' is given as argument. If categoryId is not null, only rows
+     * with that categoryId will be returned.
+     *
+     * @param categoryId
+     * @return
+     */
+    public ArrayList<Transaction> readTransactions(Integer categoryId) {
         ArrayList<Transaction> transactions = new ArrayList<>();
 
         // columns to read
@@ -170,22 +188,32 @@ public class DBManager {
             DBHelper.TRANSACTION_COUNTERPARTY_NAME,
             DBHelper.TRANSACTION_DESCRIPTION };
 
-        // create cursor object to read previously defined columns
-        Cursor cursor = db.query(DBHelper.TABLE_TRANSACTIONS, columns, null, null, null, null, null);
+
+        Cursor cursor;
+        if (categoryId == null) {
+            // create cursor object to read previously defined columns
+            cursor = db.query(DBHelper.TABLE_TRANSACTIONS, columns, null, null, null, null, null);
+        }
+        else {
+            // create cursor object to read previously defined columns only where categoryId is categoryID
+            cursor = db.query(DBHelper.TABLE_TRANSACTIONS, columns,
+                    DBHelper.TRANSACTION_CATEGORY_ID + " = ?", new String[]{categoryId.toString()},
+                    null, null, null);
+        }
+
 
         // move over rows with cursor
         if (cursor.moveToFirst()) {
             do {
                 // get needed data from current row
                 int id = cursor.getInt(cursor.getColumnIndex(DBHelper.TRANSACTION_ID));
-                int category_id = cursor.getInt(cursor.getColumnIndex(DBHelper.TRANSACTION_CATEGORY_ID));
-                String category_name = readCategories().get(category_id-1).getName();
-                int account_id = cursor.getInt(cursor.getColumnIndex(DBHelper.TRANSACTION_ACCOUNT_ID));
-                String account_name = readAccounts().get(account_id-1).getName();
+                int catId = cursor.getInt(cursor.getColumnIndex(DBHelper.TRANSACTION_CATEGORY_ID));
+                int accountId = cursor.getInt(cursor.getColumnIndex(DBHelper.TRANSACTION_ACCOUNT_ID));
+                String accountName = readAccounts().get(accountId-1).getName();
                 String date = cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_DATE));
                 int amount = cursor.getInt(cursor.getColumnIndex(DBHelper.TRANSACTION_AMOUNT));
-                String counterparty_account = cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_COUNTERPARTY_ACCOUNT));
-                String counterparty_name = cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_COUNTERPARTY_NAME));
+                String counterpartyAccount = cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_COUNTERPARTY_ACCOUNT));
+                String counterpartyName = cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_COUNTERPARTY_NAME));
                 String description = cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_DESCRIPTION));
 
                 // create category object with data
@@ -193,12 +221,11 @@ public class DBManager {
                         id,
                         date,
                         amount,
-                        account_id,
-                        account_name,
-                        category_name,
-                        category_id,
-                        counterparty_name,
-                        counterparty_account,
+                        accountId,
+                        accountName,
+                        catId,
+                        counterpartyName,
+                        counterpartyAccount,
                         description);
                 transactions.add(transaction);
             }

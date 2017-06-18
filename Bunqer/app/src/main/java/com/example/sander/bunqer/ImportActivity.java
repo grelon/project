@@ -35,25 +35,19 @@ public class ImportActivity extends AppCompatActivity {
         textView = (TextView) findViewById(R.id.tvTest);
 
         if (getIntent().getAction().equals("android.intent.action.SEND") &&
-                getIntent().getType().equals("text/csv; charset=utf-8")) {
+                getIntent().normalizeMimeType(getIntent().getType()).equals("text/csv")) {
             Log.d("log", "SEND intent with CSV type detected");
 
-            // hide unnecessary views
-            findViewById(R.id.accountname).setVisibility(View.GONE);
-            findViewById(R.id.accountnumber).setVisibility(View.GONE);
-            findViewById(R.id.pathtocsv).setVisibility(View.GONE);
-            findViewById(R.id.createAccountButton).setVisibility(View.GONE);
-
-            // get list of transaction objects
+            // try to get list of transaction objects
             transactions = CsvImportHelper.getTransactionList(getApplicationContext(), getIntent());
 
             sendToMonth();
 
             // testing grounds
-            dbManager = DBManager.getInstance(getApplicationContext());
+            dbManager = DBManager.getInstance();
             Log.d("log", "accounts: " + dbManager.readAccounts().toString());
-            Log.d("log", "categories: " + dbManager.readCategories().toString());
-            Log.d("log", "transactions: " + dbManager.readTransactions().toString());
+            Log.d("log", "categories: " + dbManager.readCategories(null).toString());
+            Log.d("log", "transactions: " + dbManager.readTransactions(null).toString());
         }
     }
 

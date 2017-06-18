@@ -20,7 +20,7 @@ public class CategoryHelper {
     private static CategoryHelper catHelper;
 
     private CategoryHelper(Context context) {
-        dbManager = DBManager.getInstance(context);
+        dbManager = DBManager.getInstance();
     }
 
     static synchronized CategoryHelper getInstance(Context context) {
@@ -32,13 +32,15 @@ public class CategoryHelper {
 
     ArrayList<Transaction> categorize(ArrayList<Transaction> transactions) {
         Log.d("log", "start categorize()");
-        ArrayList<Category> categories = dbManager.readCategories();
+
+        ArrayList<Category> categories = dbManager.readCategories(null);
+
+
         for (Transaction transaction: transactions) {
             // TODO: 13-6-17 write initial categorization algorithm
             // to income
             if (transaction.getDescription().contains("Welcome to bunq")) {
-                transaction.setCategory_id(categories.get(1).getId());
-                transaction.setCategory(categories.get(1).getName());
+                transaction.setCategoryId(categories.get(1).getId());
             }
 
             // to household
@@ -47,14 +49,12 @@ public class CategoryHelper {
                     transaction.getDescription().contains("Albert Heijn") ||
                     transaction.getDescription().contains("Lidl") ||
                     transaction.getDescription().contains("AH")) {
-                transaction.setCategory_id(categories.get(2).getId());
-                transaction.setCategory(categories.get(2).getName());
+                transaction.setCategoryId(categories.get(2).getId());
             }
 
             // to sports
             else if (transaction.getDescription().contains("karate")) {
-                transaction.setCategory_id(categories.get(3).getId());
-                transaction.setCategory(categories.get(3).getName());
+                transaction.setCategoryId(categories.get(3).getId());
             }
 
             // to food and drinks
@@ -63,18 +63,16 @@ public class CategoryHelper {
                     transaction.getDescription().contains("UvA") ||
                     transaction.getDescription().contains("Cafe") ||
                     transaction.getDescription().contains("Restaurant")) {
-                transaction.setCategory_id(categories.get(4).getId());
-                transaction.setCategory(categories.get(4).getName());
+                transaction.setCategoryId(categories.get(4).getId());
             }
 
             // to uncategorized
             else {
-                transaction.setCategory_id(categories.get(0).getId());
-                transaction.setCategory(categories.get(0).getName());
+                transaction.setCategoryId(categories.get(0).getId());
             }
             dbManager.createTransaction(transaction);
         }
-        return dbManager.readTransactions();
+        return dbManager.readTransactions(null);
     }
 
 }

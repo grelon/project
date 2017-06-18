@@ -18,10 +18,7 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Locale;
 
 public class CsvImportHelper {
 
@@ -41,7 +38,7 @@ public class CsvImportHelper {
      */
     public static ArrayList<Transaction> getTransactionList(Context context, Intent receivedIntent) {
         ArrayList<Transaction> transactions = new ArrayList<>();
-        dbManager = DBManager.getInstance(context);
+        dbManager = DBManager.getInstance();
 
         Uri uri = receivedIntent.getClipData().getItemAt(0).getUri();
         if (uri != null) {
@@ -59,16 +56,19 @@ public class CsvImportHelper {
 
                 String line;
                 while ((line = bReader.readLine()) != null) {
+                    // formatting and splitting of line
                     line = line.replace("\"", "");
                     String[] rowData = line.split(";");
+
+                    // create new transactions using the data
                     Transaction transaction = new Transaction();
                     transaction.setDate(rowData[0]);
                     transaction.setAmount(rowData[1]);
                     transaction.setAccount(rowData[2]);
-                    transaction.setCounterparty_account(rowData[3]);
-                    transaction.setCounterparty_name(rowData[4]);
+                    transaction.setCounterpartyAccount(rowData[3]);
+                    transaction.setCounterpartyName(rowData[4]);
                     transaction.setDescription(rowData[5]);
-                    transaction.setAccount_id(getAccount_id(transaction));
+                    transaction.setAccountId(getAccountId(transaction));
                     transactions.add(transaction);
                 }
 
@@ -88,7 +88,7 @@ public class CsvImportHelper {
         return transactions;
     }
 
-    private static int getAccount_id(Transaction transaction) {
+    private static int getAccountId(Transaction transaction) {
         // check if account already exists
         ArrayList<Account> accounts = dbManager.readAccounts();
         for (Account account: accounts) {
