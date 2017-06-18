@@ -15,6 +15,8 @@ import com.example.sander.bunqer.ModelClasses.Transaction;
 
 import java.util.ArrayList;
 
+import info.debatty.java.stringsimilarity.Jaccard;
+
 public class CategoryHelper {
     private static DBManager dbManager;
     private static CategoryHelper catHelper;
@@ -34,7 +36,11 @@ public class CategoryHelper {
         Log.d("log", "start categorize()");
 
         ArrayList<Category> categories = dbManager.readCategories(null);
-
+        Jaccard jaccardIndex = new Jaccard();
+        Log.d("log", "jaccard ah VS ah: " + jaccardIndex.similarity(
+                "ALBERT HEIJN 1090 \\AMSTERDAM \\ BETAALAUTOMAAT 06-06-17 21:15 PASNR.102 CONTACTLOOS",
+                "ALBERT HEIJN 2490 \\BREDA \\ BETAALAUTOMAAT 14-11-16 12:25 PASNR.103 CONTACTLOOS"));
+        Log.d("log", "jaccard hio asdf: " + jaccardIndex.similarity("hio", "asdf"));
 
         for (Transaction transaction: transactions) {
             // TODO: 13-6-17 write initial categorization algorithm
