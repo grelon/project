@@ -6,79 +6,137 @@ package com.example.sander.bunqer.Helpers;
  */
 
 
-import android.content.Context;
 import android.util.Log;
 
 import com.example.sander.bunqer.DB.DBManager;
+import com.example.sander.bunqer.ModelClasses.Account;
 import com.example.sander.bunqer.ModelClasses.Category;
 import com.example.sander.bunqer.ModelClasses.Transaction;
 
 import java.util.ArrayList;
 
-import info.debatty.java.stringsimilarity.Jaccard;
+import info.debatty.java.stringsimilarity.NormalizedLevenshtein;
 
 public class CategoryHelper {
+    public static final int UNCATEGORIZED = 1;
+    public static final int INCOME = 2;
+    public static final int EXPENSES = 3;
+    public static final int HOUSEHOLD = 4;
+
     private static DBManager dbManager;
     private static CategoryHelper catHelper;
 
-    private CategoryHelper(Context context) {
+    private CategoryHelper() {
         dbManager = DBManager.getInstance();
     }
 
-    static synchronized CategoryHelper getInstance(Context context) {
+    public static synchronized CategoryHelper getInstance() {
         if (catHelper == null) {
-            catHelper = new CategoryHelper(context);
+            catHelper = new CategoryHelper();
         }
         return catHelper;
     }
 
-    ArrayList<Transaction> categorize(ArrayList<Transaction> transactions) {
+    ArrayList<Transaction> categorize(ArrayList<Transaction> newTransactions) {
         Log.d("log", "start categorize()");
 
+        // put test transaction in DB
+        Transaction testTransaction = new Transaction();
+        testTransaction.setDate("2017-06-01");
+        testTransaction.setAmount("-13,12");
+        testTransaction.setAccount("NL96BUNQ9900021843");
+        testTransaction.setCounterpartyAccount("");
+        testTransaction.setCounterpartyName("");
+        testTransaction.setCounterpartyName("");
+        testTransaction.setDescription("ALBERT HEIJN 1090 \\AMSTERDAM \\ BETAALAUTOMAAT 06-06-17 21:15 PASNR.102 CONTACTLOOS");
+        testTransaction.setAccountId(CsvImportHelper.getAccountId(testTransaction));
+        // to household
+        testTransaction.setCategoryId(3);
+        dbManager.createTransaction(testTransaction);
+        Log.d("log", "testTransaction: " + testTransaction.toString());
+
+        ArrayList<Transaction> preparedNewTransactions = prepareTransactions(newTransactions);
+        Log.d("log", "new transactions: " + newTransactions.toString());
+
+        ArrayList<Transaction> preparedExistingTransactions =
+                prepareTransactions(dbManager.readTransactions(null));
+        Log.d("log", "existing transactions: " + preparedExistingTransactions.toString());
+
+
         ArrayList<Category> categories = dbManager.readCategories(null);
-        Jaccard jaccardIndex = new Jaccard();
-        Log.d("log", "jaccard ah VS ah: " + jaccardIndex.similarity(
-                "ALBERT HEIJN 1090 \\AMSTERDAM \\ BETAALAUTOMAAT 06-06-17 21:15 PASNR.102 CONTACTLOOS",
-                "ALBERT HEIJN 2490 \\BREDA \\ BETAALAUTOMAAT 14-11-16 12:25 PASNR.103 CONTACTLOOS"));
-        Log.d("log", "jaccard hio asdf: " + jaccardIndex.similarity("hio", "asdf"));
+        NormalizedLevenshtein normalizedLevenshtein = new NormalizedLevenshtein();
+//        Log.d("log", "jaccard zelfde categorie: " + normalizedLevenshtein.similarity(
+//                "ALBERT HEIJN 1090 \\",
+//                "AH Station Amstel \\"));
+//        Log.d("log", "jaccard andere categorie: " + normalizedLevenshtein.similarity(
+//                "ALBERT HEIJN 1090 \\",
+//                "8010-239-UvAScience \\"));
 
-        for (Transaction transaction: transactions) {
-            // TODO: 13-6-17 write initial categorization algorithm
-            // to income
-            if (transaction.getDescription().contains("Welcome to bunq")) {
-                transaction.setCategoryId(categories.get(1).getId());
+
+        int i = 0;
+        for (Transaction newTransaction: preparedNewTransactions) {
+            for (Transaction existingTransaction:preparedExistingTransactions) {
+
+                // don't compare against uncategorized transactions
+                if (existingTransaction.getCategoryId() != UNCATEGORIZED) {
+
+                    // compare every new transaction to every existing transaction for similarity
+                    Double similarity = normalizedLevenshtein.similarity(newTransaction.getDescription(),
+                            existingTransaction.getDescription());
+
+                    // very similar
+                    if (similarity > 0.4) {
+                        newTransactions.get(i).setCategoryId(existingTransaction.getCategoryId());
+                    }
+                }
             }
 
-            // to household
-            else if (transaction.getDescription().contains("IKEA") ||
-                    transaction.getDescription().contains("PRAXIS") ||
-                    transaction.getDescription().contains("Albert Heijn") ||
-                    transaction.getDescription().contains("Lidl") ||
-                    transaction.getDescription().contains("AH")) {
-                transaction.setCategoryId(categories.get(2).getId());
+            // if newTransaction still hasn't found a category, assign to uncategorized
+            if (newTransactions.get(i).getCategoryId() == 0) {
+                newTransactions.get(i).setCategoryId(UNCATEGORIZED);
             }
 
-            // to sports
-            else if (transaction.getDescription().contains("karate")) {
-                transaction.setCategoryId(categories.get(3).getId());
-            }
-
-            // to food and drinks
-            else if (transaction.getDescription().contains("cafe") ||
-                    transaction.getDescription().contains("restaurant") ||
-                    transaction.getDescription().contains("UvA") ||
-                    transaction.getDescription().contains("Cafe") ||
-                    transaction.getDescription().contains("Restaurant")) {
-                transaction.setCategoryId(categories.get(4).getId());
-            }
-
-            // to uncategorized
-            else {
-                transaction.setCategoryId(categories.get(0).getId());
-            }
-            dbManager.createTransaction(transaction);
+            dbManager.createTransaction(newTransactions.get(i));
+            i++;
         }
         return dbManager.readTransactions(null);
     }
 
+    /**
+     * Prepares transactions for comparison by removing unnecassary characters from description.
+     * Truncates all characters after '\', which is used primarily in 'BETAALAUTOMAAT' payments.
+     * The part before '\' differs most, and is used for string comparison.
+     *
+     * @param transactions
+     * @return
+     */
+    private ArrayList<Transaction> prepareTransactions(ArrayList<Transaction> transactions) {
+        ArrayList<Transaction> preparedTransactions = transactions;
+
+        for (Transaction transaction:preparedTransactions) {
+            String description = transaction.getDescription();
+            if (description.contains("\\")) {
+                transaction.setDescription(description.substring(0, description.indexOf("\\")));
+            }
+        }
+
+        return preparedTransactions;
+    }
+
+    public static void setupDefaultCategories(Account newAccount) {
+        // empty list of categories
+        ArrayList<Category> defaultCategories = new ArrayList<>();
+
+        // TODO: 13-6-17 Improve default categories
+        defaultCategories.add(new Category(newAccount.getId(), "Uncategorized"));
+        defaultCategories.add(new Category(newAccount.getId(), "Income"));
+        defaultCategories.add(new Category(newAccount.getId(), "Expenses"));
+        defaultCategories.add(new Category(newAccount.getId(), "Household"));
+        defaultCategories.add(new Category(newAccount.getId(), "Sports"));
+        defaultCategories.add(new Category(newAccount.getId(), "Food and drinks"));
+
+        for (Category category: defaultCategories) {
+            dbManager.createCategory(category);
+        }
+    }
 }

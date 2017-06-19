@@ -74,7 +74,7 @@ public class CsvImportHelper {
 
                 // categorize transactions
                 Log.d("log","completing import");
-                return CategoryHelper.getInstance(context).categorize(transactions);
+                return CategoryHelper.getInstance().categorize(transactions);
 
             } catch (NullPointerException e) {
                 Log.w("ClipData", "Failure to create stream");
@@ -88,7 +88,7 @@ public class CsvImportHelper {
         return transactions;
     }
 
-    private static int getAccountId(Transaction transaction) {
+    public static int getAccountId(Transaction transaction) {
         // check if account already exists
         ArrayList<Account> accounts = dbManager.readAccounts();
         for (Account account: accounts) {
@@ -112,24 +112,8 @@ public class CsvImportHelper {
         ArrayList<Account> accounts = dbManager.readAccounts();
         Account newAccount = accounts.get(accounts.size()-1);
 
-        setupDefaultCategories(newAccount);
+        CategoryHelper.getInstance().setupDefaultCategories(newAccount);
 
         return accounts.get(accounts.size()-1);
-    }
-
-    private static void setupDefaultCategories(Account newAccount) {
-        // empty list of categories
-        ArrayList<Category> defaultCategories = new ArrayList<>();
-
-        // TODO: 13-6-17 Improve default categories
-        defaultCategories.add(new Category(newAccount.getId(), "Uncategorized"));
-        defaultCategories.add(new Category(newAccount.getId(), "Gift"));
-        defaultCategories.add(new Category(newAccount.getId(), "Household"));
-        defaultCategories.add(new Category(newAccount.getId(), "Sports"));
-        defaultCategories.add(new Category(newAccount.getId(), "Food and drinks"));
-
-        for (Category category: defaultCategories) {
-            dbManager.createCategory(category);
-        }
     }
 }

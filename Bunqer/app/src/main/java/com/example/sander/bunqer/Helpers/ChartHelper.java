@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static java.lang.Math.abs;
+
 public class ChartHelper {
     private ArrayList<Category> categories;
     private DBManager dbManager;
@@ -42,11 +44,22 @@ public class ChartHelper {
             ArrayList<Category> incomeCategories = new ArrayList<>();
             ArrayList<Category> expensesCategories = new ArrayList<>();
 
-            int incomeTotal = 0;
-            int expensesTotal = 0;
+            int total = 0;
 
+            // calculate absolute total of all categories
             for (Category category:categories) {
-                if (category.getId() == 2) {
+                if (category.getParentId() == 0) {
+                    total += (abs(category.getTotalValue()));
+                }
+            }
+
+            // calculate percentages of total per category and produce PieEntries
+            for (Category category:categories) {
+                float percentage = (abs(category.getTotalValue()) * 100.0f) / total;
+
+                entries.add(new PieEntry(percentage, category.getName(), ))
+
+                if (category.getId() == CategoryHelper.UNCATEGORIZED) {
                     incomeTotal += category.getTotalValue();
                     incomeCategories.add(category);
                 }

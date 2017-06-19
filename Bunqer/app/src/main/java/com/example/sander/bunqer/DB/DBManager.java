@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.example.sander.bunqer.Helpers.CategoryHelper;
 import com.example.sander.bunqer.ModelClasses.Account;
 import com.example.sander.bunqer.ModelClasses.Category;
 import com.example.sander.bunqer.ModelClasses.Transaction;
@@ -103,6 +104,7 @@ public class DBManager {
         String[] columns = new String[] {
                 DBHelper.CATEGORY_ID,
                 DBHelper.CATEGORY_ACCOUNT_ID,
+                DBHelper.CATEGORY_PARENT_ID,
                 DBHelper.CATEGORY_NAME };
 
         Cursor cursor;
@@ -112,7 +114,7 @@ public class DBManager {
         }
         else {
             // create cursor object to read previously defined columns only where categoryId is categoryID
-            cursor = db.query(DBHelper.TABLE_TRANSACTIONS, columns,
+            cursor = db.query(DBHelper.TABLE_CATEGORIES, columns,
                     DBHelper.CATEGORY_ID + " = ?", new String[]{categoryId.toString()},
                     null, null, null);
         }
@@ -123,10 +125,11 @@ public class DBManager {
                 // get needed data from current row
                 int id = cursor.getInt(cursor.getColumnIndex(DBHelper.CATEGORY_ID));
                 int accountId = cursor.getInt(cursor.getColumnIndex(DBHelper.CATEGORY_ACCOUNT_ID));
+                int parentId = cursor.getInt(cursor.getColumnIndex(DBHelper.CATEGORY_PARENT_ID));
                 String name = cursor.getString(cursor.getColumnIndex(DBHelper.CATEGORY_NAME));
 
                 // create category object with data
-                Category category = new Category(id, accountId, name);
+                Category category = new Category(id, parentId, accountId, name);
 
                 // fill category with transactions
                 category.setTransactions(readTransactions(category.getId()));
@@ -135,6 +138,16 @@ public class DBManager {
             }
             // until end of cursor object has been reached
             while (cursor.moveToNext());
+        }
+
+        for (Category category:categories) {
+            if (category.getParentId() != 0) {
+                for (Category parentCategory: categories) {
+                    if (parentCategory.getId() == category.getParentId()) {
+                        parentCategory.addSubcategory(category);
+                    }
+                }
+            }
         }
 
         // wrap up and return
@@ -150,8 +163,16 @@ public class DBManager {
     }
 
     public void deleteCategory(Category category) {
+        // categorize all child transactions as uncategorized
+        for (Transaction transaction:category.getTransactions()) {
+            transaction.setCategoryId(CategoryHelper.UNCATEGORIZED);
+            updateTransaction(transaction);
+        }
+
+        // delete category
         db.delete(DBHelper.TABLE_CATEGORIES, DBHelper.CATEGORY_ID + " = ?",
                 new String[] {String.valueOf(category.getId())});
+
     }
 
     // CRUD: transactions table

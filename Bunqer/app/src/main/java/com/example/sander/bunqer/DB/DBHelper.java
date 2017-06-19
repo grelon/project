@@ -30,6 +30,7 @@ class DBHelper extends SQLiteOpenHelper {
     // column names
     static final String CATEGORY_ID = "category_id";
     static final String CATEGORY_ACCOUNT_ID = "account_id";
+    static final String CATEGORY_PARENT_ID = "parent_id";
     static final String CATEGORY_NAME = "name";
     // TODO: 12-6-17 Maybe integrate filters within table with their own column?
 
@@ -38,6 +39,7 @@ class DBHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + TABLE_CATEGORIES + " ( " +
                     CATEGORY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                     CATEGORY_ACCOUNT_ID + " INTEGER NOT NULL, " +
+                    CATEGORY_PARENT_ID + " INTEGER NOT NULL, " +
                     CATEGORY_NAME + " TEXT NOT NULL);";
 
 

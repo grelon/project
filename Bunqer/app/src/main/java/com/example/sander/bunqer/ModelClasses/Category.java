@@ -17,23 +17,48 @@ public class Category implements Serializable {
 
     private int id;
     private int accountId;
+    private int parentId;
     private String name;
+    private ArrayList<Category> subcategories;
     private ArrayList<Transaction> transactions;
     private int totalValue;
 
     // constructors
-    public Category(int accountId, String name) {
+    public Category(int accountId, int parentId, String name) {
         this.accountId = accountId;
+        this.parentId = parentId;
         this.name = name;
     }
 
-    public Category(int id, int accountId, String name) {
+    // constructor used by database
+    public Category(int id, int parentId, int accountId, String name) {
         this.id = id;
         this.accountId = accountId;
+        this.parentId = parentId;
         this.name = name;
     }
 
     // setters & getters
+    public ArrayList<Category> getSubcategories() {
+        return subcategories;
+    }
+
+    public void setSubcategories(ArrayList<Category> subcategories) {
+        this.subcategories = subcategories;
+    }
+
+    public void addSubcategory(Category category) {
+        this.subcategories.add(category);
+    }
+
+    public int getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(int parentId) {
+        this.parentId = parentId;
+    }
+
     public int getTotalValue() {
         // if the transactions haven't been assigned to categories yet
         if (transactions == null) {
@@ -52,6 +77,7 @@ public class Category implements Serializable {
     }
 
     public ArrayList<Transaction> getTransactions() {
+        updateTransactions();
         return transactions;
     }
 
@@ -85,13 +111,20 @@ public class Category implements Serializable {
 
     // other
     private void updateTransactions() {
-        // if transaction has not yet been initialized
+        // if transactions have not yet been initialized
         if (transactions == null) {
             transactions = new ArrayList<>();
         }
 
         // iterate over every transaction and add them if they belong to this category
         transactions.clear();
+
+        if (subcategories.size() != 0) {
+            for (Category category:subcategories) {
+
+            }
+        }
+
         for (Transaction transaction:DBManager.getInstance().readTransactions(id)) {
             transactions.add(transaction);
         }

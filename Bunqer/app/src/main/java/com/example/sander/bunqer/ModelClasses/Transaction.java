@@ -14,14 +14,12 @@ public class Transaction implements Serializable {
     private int accountId;
     private String account;
     private String category;
-    private int categoryId;
+    private int categoryId = 0;
     private String counterpartyName;
     private String counterpartyAccount;
     private String description;
 
     // constructor for CSV import
-
-
     public Transaction() {
     }
 
