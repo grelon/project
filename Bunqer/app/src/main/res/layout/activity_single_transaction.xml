@@ -8,46 +8,41 @@
     tools:context="com.example.sander.bunqer.SingleTransactionActivity">
 
     <TextView
-        android:id="@+id/counterpartyName"
+        android:id="@+id/single_transaction_counterpartyName"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Albert Heijn"/>
+        android:layout_height="wrap_content" />
 
     <TextView
-        android:id="@+id/counterpartyAccount"
+        android:id="@+id/single_transaction_counterpartyAccount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="NL01ABCD0123456789"
         android:layout_margin="8dp"
-        app:layout_constraintTop_toBottomOf="@id/counterpartyName"
-        app:layout_constraintStart_toStartOf="@id/counterpartyName"/>
+        app:layout_constraintTop_toBottomOf="@id/single_transaction_counterpartyName"
+        app:layout_constraintStart_toStartOf="@id/single_transaction_counterpartyName"/>
 
     <TextView
-        android:id="@+id/transactionTime"
+        android:id="@+id/single_transaction_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="06-06-2017 21:15"
         android:layout_margin="8dp"
-        app:layout_constraintTop_toBottomOf="@id/counterpartyAccount"
-        app:layout_constraintStart_toStartOf="@id/counterpartyName"/>
+        app:layout_constraintTop_toBottomOf="@id/single_transaction_counterpartyAccount"
+        app:layout_constraintStart_toStartOf="@id/single_transaction_counterpartyName"/>
 
     <TextView
-        android:id="@+id/transactionAmount"
+        android:id="@+id/single_transaction_amount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="€2,00"
         android:layout_margin="8dp"
-        app:layout_constraintTop_toBottomOf="@id/transactionTime"
-        app:layout_constraintStart_toStartOf="@id/counterpartyName"/>
+        app:layout_constraintTop_toBottomOf="@id/single_transaction_date"
+        app:layout_constraintStart_toStartOf="@id/single_transaction_counterpartyName"/>
 
     <TextView
-        android:id="@+id/transactionDescription"
+        android:id="@+id/single_transaction_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ALBERT HEIJN 1090 \ AMSTERDAM \ BETAALAUTOMAAT 06-06-17 21:15 PASNR. 102 CONTACTLOOS"
         android:layout_margin="8dp"
-        app:layout_constraintTop_toBottomOf="@id/transactionAmount"
-        app:layout_constraintStart_toStartOf="@id/counterpartyName"/>
+        app:layout_constraintTop_toBottomOf="@id/single_transaction_amount"
+        app:layout_constraintStart_toStartOf="@id/single_transaction_counterpartyName"/>
 
 
 </android.support.constraint.ConstraintLayout>

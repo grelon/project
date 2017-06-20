@@ -145,14 +145,28 @@ public class DBManager {
             }
         }
 
-        ArrayList<Category> rootCategories = new ArrayList<>();
-        for (Category category:allCategories){
-            if (category.getParentId() == ROOT) {
-                rootCategories.add(category);
-            }
-        }
 
-        return rootCategories;
+
+        if (categoryId == null) {
+            ArrayList<Category> rootCategories = new ArrayList<>();
+            for (Category category:allCategories){
+                if (category.getParentId() == ROOT) {
+                    rootCategories.add(category);
+                }
+            }
+
+            return rootCategories;
+        }
+        else {
+            ArrayList<Category> singleCategory = new ArrayList<>();
+            for (Category category:allCategories) {
+                if (category.getId() == categoryId) {
+                    singleCategory.add(category);
+                }
+            }
+
+            return singleCategory;
+        }
     }
 
     public void updateCategory(Category category) {

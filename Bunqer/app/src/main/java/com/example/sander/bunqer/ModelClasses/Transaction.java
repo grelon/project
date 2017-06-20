@@ -137,9 +137,15 @@ public class Transaction implements Serializable {
                 ", account='" + account + '\'' +
                 ", category='" + category + '\'' +
                 ", categoryId=" + categoryId +
-                ", counterpartyName='" + counterpartyName + '\'' +
-                ", counterpartyAccount='" + counterpartyAccount + '\'' +
+                ", single_transaction_counterpartyName='" + counterpartyName + '\'' +
+                ", single_transaction_counterpartyAccount='" + counterpartyAccount + '\'' +
                 ", description='" + description + '\'' +
                 '}';
+    }
+
+    public String getFormattedAmount() {
+        String formattedAmount = String.valueOf(amount);
+        // TODO: 20-6-17 Format amount with a StringBuilder or something like that.
+        return formattedAmount;
     }
 }
