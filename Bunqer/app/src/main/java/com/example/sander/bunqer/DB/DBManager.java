@@ -19,6 +19,8 @@ public class DBManager {
     private static SQLiteDatabase db;
     private static DBManager dbManager;
 
+    private static final int ROOT = -1;
+
     // constructor
     private DBManager() {
         dbHelper = DBHelper.getInstance();
@@ -99,7 +101,7 @@ public class DBManager {
     }
 
     public ArrayList<Category> readCategories(Integer categoryId) {
-        ArrayList<Category> categories = new ArrayList<>();
+        ArrayList<Category> allCategories = new ArrayList<>();
 
         // columns to read
         String[] columns = new String[] {
@@ -108,17 +110,7 @@ public class DBManager {
                 DBHelper.CATEGORY_PARENT_ID,
                 DBHelper.CATEGORY_NAME };
 
-        Cursor cursor;
-        if (categoryId == null) {
-            // create cursor object to read previously defined columns
-            cursor = db.query(DBHelper.TABLE_CATEGORIES, columns, null, null, null, null, null);
-        }
-        else {
-            // create cursor object to read previously defined columns only where categoryId is categoryID
-            cursor = db.query(DBHelper.TABLE_CATEGORIES, columns,
-                    DBHelper.CATEGORY_ID + " = ?", new String[]{categoryId.toString()},
-                    null, null, null);
-        }
+        Cursor cursor = db.query(DBHelper.TABLE_CATEGORIES, columns, null, null, null, null, null);
 
         // move over rows with cursor
         if (cursor.moveToFirst()) {
@@ -132,28 +124,35 @@ public class DBManager {
                 // create category object with data
                 Category category = new Category(id, parentId, accountId, name);
 
-                // fill category with transactions
-                category.setTransactions(readTransactions(category.getId()));
-
-                categories.add(category);
+                allCategories.add(category);
             }
             // until end of cursor object has been reached
             while (cursor.moveToNext());
         }
+        cursor.close();
 
-        for (Category category:categories) {
-            if (category.getParentId() != 0) {
-                for (Category parentCategory: categories) {
-                    if (parentCategory.getId() == category.getParentId()) {
-                        parentCategory.addSubcategory(category);
-                    }
+        // populate subcategory arrays of categories
+        for (Category category:allCategories) {
+            // populate category with transactions if any exist
+            category.updateTransactions();
+
+            // add categories to their parent categories, if any
+            for (Category parentCategory: allCategories) {
+                if (parentCategory.getId() == category.getParentId()) {
+
+                    parentCategory.addSubcategory(category);
                 }
             }
         }
 
-        // wrap up and return
-        cursor.close();
-        return categories;
+        ArrayList<Category> rootCategories = new ArrayList<>();
+        for (Category category:allCategories){
+            if (category.getParentId() == ROOT) {
+                rootCategories.add(category);
+            }
+        }
+
+        return rootCategories;
     }
 
     public void updateCategory(Category category) {

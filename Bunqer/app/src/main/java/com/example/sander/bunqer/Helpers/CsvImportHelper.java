@@ -46,6 +46,9 @@ public class CsvImportHelper {
             try {
                 AssetFileDescriptor descriptor = context.getContentResolver()
                         .openTypedAssetFileDescriptor(uri, "text/*", null);
+                if (descriptor == null) {
+                    Log.d("log", "descriptor is null");
+                }
                 inputStream = descriptor.createInputStream();
                 InputStreamReader isReader = new InputStreamReader(inputStream, "UTF-8");
 
@@ -74,7 +77,7 @@ public class CsvImportHelper {
 
                 // categorize transactions
                 Log.d("log","completing import");
-                return CategoryHelper.getInstance().categorize(transactions);
+                return CategoryHelper.categorize(transactions);
 
             } catch (NullPointerException e) {
                 Log.w("ClipData", "Failure to create stream");

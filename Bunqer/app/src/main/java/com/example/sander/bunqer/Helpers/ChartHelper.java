@@ -36,27 +36,20 @@ public class ChartHelper {
 
     public PieData setupPieData() {
         categories = dbManager.readCategories(null);
-
         // assert if there is data
         if (categories.size() > 0) {
             List<PieEntry> entries = new ArrayList<>();
-
-            ArrayList<Category> incomeCategories = new ArrayList<>();
-            ArrayList<Category> expensesCategories = new ArrayList<>();
 
             int total = 0;
 
             // calculate absolute total of all categories
             for (Category category:categories) {
-                if (category.getParentId() == 0) {
-                    total += (abs(category.getTotalValue()));
-                }
+                total += (abs(category.getTotalValue()));
             }
 
-            // calculate percentages of total per category and produce PieEntries
+            // calculate percentages of total per category and add PieEntries
             for (Category category:categories) {
                 float percentage = (abs(category.getTotalValue()) * 100.0f) / total;
-
                 entries.add(new PieEntry(percentage, category.getName(), category));
             }
 
@@ -69,6 +62,8 @@ public class ChartHelper {
             colors.add(ColorTemplate.rgb("#008000"));
             // red
             colors.add(ColorTemplate.rgb("#ff0000"));
+            // yellow
+            colors.add(ColorTemplate.rgb("#FFFF00"));
             set.setColors(colors);
 
             return new PieData(set);
@@ -77,29 +72,31 @@ public class ChartHelper {
     }
 
     public PieDataSet rebuildDataset(PieEntry selectedEntry, PieChart pieChart) {
-        ArrayList<Category> currentCategories = new ArrayList<>();
-        int currentCategoriesTotal = 0;
+        ArrayList<Category> newCategories = new ArrayList<>();
+        int newCategoriesTotal = 0;
 
-        // when expenses has been selected
-        if (Objects.equals("Expenses", selectedEntry.getLabel())) {
+        Category category = (Category) selectedEntry.getData();
+
+        // if category has subcategories, build a new chart
+        if (category.getSubcategories().size() != 0) {
             // get all entries from dataset and remove them
             List<PieEntry> entries = pieChart.getData().getDataSet().getEntriesForXValue(0);
             entries.clear();
 
             // add all categories in entry
-            for (Category category:(ArrayList<Category>) selectedEntry.getData()) {
-                int totalValue = category.getTotalValue();
+            for (Category subCategory:category.getSubcategories()) {
+                int totalValue = subCategory.getTotalValue();
                 if (totalValue != 0) {
-                    currentCategories.add(category);
-                    currentCategoriesTotal += totalValue;
+                    newCategories.add(subCategory);
+                    newCategoriesTotal += totalValue;
                 }
             }
 
             // add entries to list
-            for (Category category:currentCategories) {
+            for (Category newCategory:newCategories) {
                 entries.add(new PieEntry(
-                        (float)category.getTotalValue() / currentCategoriesTotal*100,
-                        category.getName(), category));
+                        (float)category.getTotalValue() / newCategoriesTotal*100,
+                        newCategory.getName(), newCategory));
             }
 
             PieDataSet set = new PieDataSet(entries, "Expenses");
@@ -109,45 +106,15 @@ public class ChartHelper {
 
             return set;
         }
-        // when income has been selected
-        else if (Objects.equals("Income", selectedEntry.getLabel())) {
-            Log.d("log", "income selected");
 
-            // get all entries from dataset and remove them
-            List<PieEntry> entries = pieChart.getData().getDataSet().getEntriesForXValue(0);
-            entries.clear();
-
-            // add all categories in entry
-            for (Category category:(ArrayList<Category>) selectedEntry.getData()) {
-                int totalValue = category.getTotalValue();
-                if (totalValue != 0) {
-                    currentCategories.add(category);
-                    currentCategoriesTotal += totalValue;
-                }
-            }
-
-            // add entries to list
-            for (Category category:currentCategories) {
-                entries.add(new PieEntry(
-                        (float)category.getTotalValue() / currentCategoriesTotal*100,
-                        category.getName(), category));
-            }
-
-            PieDataSet set = new PieDataSet(entries, "Income");
-            set.setSliceSpace(2f);
-            set.setSelectionShift(0f);
-            set.setColors(ColorTemplate.MATERIAL_COLORS);
-
-            return set;
-        }
-
-        // when a category has been selected
+        // otherwise send to Transaction List of category
         else {
-            Category category = (Category) selectedEntry.getData();
             Intent toTransactionList = new Intent(context, TransactionListActivity.class);
             toTransactionList.putExtra("category", category);
             context.startActivity(toTransactionList);
         }
-    return null;
+
+        // shouldn't be able to get here
+        return null;
     }
 }

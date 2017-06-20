@@ -21,23 +21,14 @@ public class CategoryHelper {
     public static final int UNCATEGORIZED = 1;
     public static final int INCOME = 2;
     public static final int EXPENSES = 3;
-    public static final int HOUSEHOLD = 4;
+    public static final int GIFT = 4;
+    public static final int HOUSEHOLD = 5;
 
-    private static DBManager dbManager;
     private static CategoryHelper catHelper;
 
-    private CategoryHelper() {
-        dbManager = DBManager.getInstance();
-    }
+    private CategoryHelper(){}
 
-    public static synchronized CategoryHelper getInstance() {
-        if (catHelper == null) {
-            catHelper = new CategoryHelper();
-        }
-        return catHelper;
-    }
-
-    ArrayList<Transaction> categorize(ArrayList<Transaction> newTransactions) {
+    static ArrayList<Transaction> categorize(ArrayList<Transaction> newTransactions) {
         Log.d("log", "start categorize()");
 
         // put test transaction in DB
@@ -51,19 +42,19 @@ public class CategoryHelper {
         testTransaction.setDescription("ALBERT HEIJN 1090 \\AMSTERDAM \\ BETAALAUTOMAAT 06-06-17 21:15 PASNR.102 CONTACTLOOS");
         testTransaction.setAccountId(CsvImportHelper.getAccountId(testTransaction));
         // to household
-        testTransaction.setCategoryId(4);
-        dbManager.createTransaction(testTransaction);
+        testTransaction.setCategoryId(HOUSEHOLD);
+        DBManager.getInstance().createTransaction(testTransaction);
         Log.d("log", "testTransaction: " + testTransaction.toString());
 
         ArrayList<Transaction> preparedNewTransactions = prepareTransactions(newTransactions);
         Log.d("log", "new transactions: " + newTransactions.toString());
 
         ArrayList<Transaction> preparedExistingTransactions =
-                prepareTransactions(dbManager.readTransactions(null));
+                prepareTransactions(DBManager.getInstance().readTransactions(null));
         Log.d("log", "existing transactions: " + preparedExistingTransactions.toString());
 
 
-        ArrayList<Category> categories = dbManager.readCategories(null);
+//        ArrayList<Category> categories = DBManager.getInstance().readCategories(null);
         NormalizedLevenshtein normalizedLevenshtein = new NormalizedLevenshtein();
 //        Log.d("log", "jaccard zelfde categorie: " + normalizedLevenshtein.similarity(
 //                "ALBERT HEIJN 1090 \\",
@@ -96,10 +87,10 @@ public class CategoryHelper {
                 newTransactions.get(i).setCategoryId(UNCATEGORIZED);
             }
 
-            dbManager.createTransaction(newTransactions.get(i));
+            DBManager.getInstance().createTransaction(newTransactions.get(i));
             i++;
         }
-        return dbManager.readTransactions(null);
+        return DBManager.getInstance().readTransactions(null);
     }
 
     /**
@@ -110,7 +101,7 @@ public class CategoryHelper {
      * @param transactions
      * @return
      */
-    private ArrayList<Transaction> prepareTransactions(ArrayList<Transaction> transactions) {
+    private static ArrayList<Transaction> prepareTransactions(ArrayList<Transaction> transactions) {
         ArrayList<Transaction> preparedTransactions = transactions;
 
         for (Transaction transaction:preparedTransactions) {
@@ -132,7 +123,7 @@ public class CategoryHelper {
 
         // create root categories
         for (String name:defaultRootNames) {
-            dbManager.createCategory(new Category(newAccount.getId(), 0, name));
+            DBManager.getInstance().createCategory(new Category(newAccount.getId(), -1, name));
         }
 
         // list of default subcategory names
@@ -144,7 +135,7 @@ public class CategoryHelper {
 
         // create default subcategories
         for (Category category: defaultCategories) {
-            dbManager.createCategory(category);
+            DBManager.getInstance().createCategory(category);
         }
     }
 }

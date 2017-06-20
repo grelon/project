@@ -19,7 +19,7 @@ public class Category implements Serializable {
     private int accountId;
     private int parentId;
     private String name;
-    private ArrayList<Category> subcategories;
+    private ArrayList<Category> subcategories = new ArrayList<>();
     private ArrayList<Transaction> transactions;
     private int totalValue;
 
@@ -50,8 +50,8 @@ public class Category implements Serializable {
         this.subcategories = subcategories;
     }
 
-    public void addSubcategory(Category category) {
-        this.subcategories.add(category);
+    public void addSubcategory(Category subCategory) {
+        this.subcategories.add(subCategory);
     }
 
     public int getParentId() {
@@ -63,12 +63,22 @@ public class Category implements Serializable {
     }
 
     public int getTotalValue() {
+        // initialize total value of category at 0 eurocents
+        totalValue = 0;
+
+        // recursively get total value of subcategories
+        if (subcategories.size() > 0) {
+            for (Category category:subcategories) {
+                totalValue += category.getTotalValue();
+            }
+        }
+
         // if the transactions haven't been assigned to categories yet
         if (transactions == null) {
             updateTransactions();
         }
 
-        totalValue = 0;
+        // add all transactions of category to total value
         for (Transaction transaction:getTransactions()) {
             totalValue += transaction.getAmount();
         }
@@ -113,7 +123,7 @@ public class Category implements Serializable {
     }
 
     // other
-    private void updateTransactions() {
+    public void updateTransactions() {
         // if transactions have not yet been initialized
         if (transactions == null) {
             transactions = new ArrayList<>();
@@ -121,13 +131,6 @@ public class Category implements Serializable {
 
         // iterate over every transaction and add them if they belong to this category
         transactions.clear();
-
-        if (subcategories.size() != 0) {
-            for (Category category:subcategories) {
-
-            }
-        }
-
         for (Transaction transaction:DBManager.getInstance().readTransactions(id)) {
             transactions.add(transaction);
         }
