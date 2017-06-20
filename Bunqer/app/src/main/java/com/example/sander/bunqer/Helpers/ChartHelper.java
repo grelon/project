@@ -57,26 +57,8 @@ public class ChartHelper {
             for (Category category:categories) {
                 float percentage = (abs(category.getTotalValue()) * 100.0f) / total;
 
-                entries.add(new PieEntry(percentage, category.getName(), ))
-
-                if (category.getId() == CategoryHelper.UNCATEGORIZED) {
-                    incomeTotal += category.getTotalValue();
-                    incomeCategories.add(category);
-                }
-                else {
-                    expensesTotal += category.getTotalValue();
-                    expensesCategories.add(category);
-                }
+                entries.add(new PieEntry(percentage, category.getName(), category));
             }
-
-            // calculate percentages for chart
-            expensesTotal = -expensesTotal;
-            int total = incomeTotal + expensesTotal;
-            float mIncomePercentage = (incomeTotal*100.0f) / total;
-            float mExpensesPercentage = (expensesTotal*100.0f) / total;
-
-            entries.add(new PieEntry(mIncomePercentage, "Income", incomeCategories));
-            entries.add(new PieEntry(mExpensesPercentage, "Expenses", expensesCategories));
 
             PieDataSet set = new PieDataSet(entries, "Total");
             set.setSliceSpace(2f);

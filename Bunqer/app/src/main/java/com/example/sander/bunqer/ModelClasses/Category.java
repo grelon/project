@@ -24,6 +24,9 @@ public class Category implements Serializable {
     private int totalValue;
 
     // constructors
+    public Category() {
+    }
+
     public Category(int accountId, int parentId, String name) {
         this.accountId = accountId;
         this.parentId = parentId;

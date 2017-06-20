@@ -112,7 +112,7 @@ public class CsvImportHelper {
         ArrayList<Account> accounts = dbManager.readAccounts();
         Account newAccount = accounts.get(accounts.size()-1);
 
-        CategoryHelper.getInstance().setupDefaultCategories(newAccount);
+        CategoryHelper.setupDefaultCategories(newAccount);
 
         return accounts.get(accounts.size()-1);
     }

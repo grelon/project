@@ -51,7 +51,7 @@ public class CategoryHelper {
         testTransaction.setDescription("ALBERT HEIJN 1090 \\AMSTERDAM \\ BETAALAUTOMAAT 06-06-17 21:15 PASNR.102 CONTACTLOOS");
         testTransaction.setAccountId(CsvImportHelper.getAccountId(testTransaction));
         // to household
-        testTransaction.setCategoryId(3);
+        testTransaction.setCategoryId(4);
         dbManager.createTransaction(testTransaction);
         Log.d("log", "testTransaction: " + testTransaction.toString());
 
@@ -124,17 +124,25 @@ public class CategoryHelper {
     }
 
     public static void setupDefaultCategories(Account newAccount) {
-        // empty list of categories
+        // list of root category names
+        ArrayList<String> defaultRootNames = new ArrayList<>();
+        defaultRootNames.add("Uncategorized");
+        defaultRootNames.add("Income");
+        defaultRootNames.add("Expenses");
+
+        // create root categories
+        for (String name:defaultRootNames) {
+            dbManager.createCategory(new Category(newAccount.getId(), 0, name));
+        }
+
+        // list of default subcategory names
         ArrayList<Category> defaultCategories = new ArrayList<>();
+        defaultCategories.add(new Category(newAccount.getId(), INCOME, "Gift"));
+        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Household"));
+        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Sports"));
+        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Food and drinks"));
 
-        // TODO: 13-6-17 Improve default categories
-        defaultCategories.add(new Category(newAccount.getId(), "Uncategorized"));
-        defaultCategories.add(new Category(newAccount.getId(), "Income"));
-        defaultCategories.add(new Category(newAccount.getId(), "Expenses"));
-        defaultCategories.add(new Category(newAccount.getId(), "Household"));
-        defaultCategories.add(new Category(newAccount.getId(), "Sports"));
-        defaultCategories.add(new Category(newAccount.getId(), "Food and drinks"));
-
+        // create default subcategories
         for (Category category: defaultCategories) {
             dbManager.createCategory(category);
         }

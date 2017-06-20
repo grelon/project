@@ -94,6 +94,7 @@ public class DBManager {
         ContentValues values = new ContentValues();
         values.put(DBHelper.CATEGORY_ACCOUNT_ID, category.getAccountId());
         values.put(DBHelper.CATEGORY_NAME, category.getName());
+        values.put(DBHelper.CATEGORY_PARENT_ID, category.getParentId());
         db.insert(DBHelper.TABLE_CATEGORIES, null, values);
     }
 
