@@ -36,21 +36,6 @@ public class CategoryHelper {
             dbManager = DBManager.getInstance();
         }
 
-        // put test transaction in DB
-//        Transaction testTransaction = new Transaction();
-//        testTransaction.setDate("2017-06-01");
-//        testTransaction.setAmount("-13,12");
-//        testTransaction.setAccount("NL96BUNQ9900021843");
-//        testTransaction.setCounterpartyAccount("");
-//        testTransaction.setCounterpartyName("");
-//        testTransaction.setCounterpartyName("");
-//        testTransaction.setDescription("ALBERT HEIJN 1090 \\AMSTERDAM \\ BETAALAUTOMAAT 06-06-17 21:15 PASNR.102 CONTACTLOOS");
-//        testTransaction.setAccountId(CsvImportHelper.getAccountId(testTransaction));
-//        // to household
-//        testTransaction.setCategoryId(HOUSEHOLD);
-//        dbManager.createTransaction(testTransaction);
-//        Log.d("log", "testTransaction: " + testTransaction.toString());
-
         ArrayList<Transaction> preparedNewTransactions = prepareTransactions(newTransactions);
         Log.d("log", "new transactions: " + newTransactions.toString());
 
@@ -58,16 +43,7 @@ public class CategoryHelper {
                 prepareTransactions(dbManager.readTransactions(null));
         Log.d("log", "existing transactions: " + preparedExistingTransactions.toString());
 
-
-//        ArrayList<Category> categories = DBManager.getInstance().readCategories(null);
         NormalizedLevenshtein normalizedLevenshtein = new NormalizedLevenshtein();
-//        Log.d("log", "jaccard zelfde categorie: " + normalizedLevenshtein.similarity(
-//                "ALBERT HEIJN 1090 \\",
-//                "AH Station Amstel \\"));
-//        Log.d("log", "jaccard andere categorie: " + normalizedLevenshtein.similarity(
-//                "ALBERT HEIJN 1090 \\",
-//                "8010-239-UvAScience \\"));
-
 
         int i = 0;
         for (Transaction newTransaction: preparedNewTransactions) {
@@ -139,9 +115,29 @@ public class CategoryHelper {
         // list of default subcategory names
         ArrayList<Category> defaultCategories = new ArrayList<>();
         defaultCategories.add(new Category(newAccount.getId(), INCOME, "Gift"));
-        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Household"));
+        defaultCategories.add(new Category(newAccount.getId(), INCOME, "Salary"));
+        defaultCategories.add(new Category(newAccount.getId(), INCOME, "Scholarship"));
+        defaultCategories.add(new Category(newAccount.getId(), INCOME, "Benefits"));
+        defaultCategories.add(new Category(newAccount.getId(), INCOME, "Other income"));
+
+        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Groceries"));
+        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Rent"));
+        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Utilities"));
+        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Taxes"));
+        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Subscriptions"));
+        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Telecom"));
+
+        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Medical"));
+        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Insurances"));
+        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Transportation"));
+
+        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Clothes"));
+        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Education"));
+        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Events"));
         defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Sports"));
+
         defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Food and drinks"));
+        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Other expenses"));
 
         // create default subcategories
         for (Category category: defaultCategories) {
