@@ -24,33 +24,38 @@ public class CategoryHelper {
     public static final int GIFT = 4;
     public static final int HOUSEHOLD = 5;
 
-    private static CategoryHelper catHelper;
+    private static DBManager dbManager;
 
     private CategoryHelper(){}
 
     static ArrayList<Transaction> categorize(ArrayList<Transaction> newTransactions) {
         Log.d("log", "start categorize()");
 
+        // make sure there is a DBManager instance
+        if (dbManager == null) {
+            dbManager = DBManager.getInstance();
+        }
+
         // put test transaction in DB
-        Transaction testTransaction = new Transaction();
-        testTransaction.setDate("2017-06-01");
-        testTransaction.setAmount("-13,12");
-        testTransaction.setAccount("NL96BUNQ9900021843");
-        testTransaction.setCounterpartyAccount("");
-        testTransaction.setCounterpartyName("");
-        testTransaction.setCounterpartyName("");
-        testTransaction.setDescription("ALBERT HEIJN 1090 \\AMSTERDAM \\ BETAALAUTOMAAT 06-06-17 21:15 PASNR.102 CONTACTLOOS");
-        testTransaction.setAccountId(CsvImportHelper.getAccountId(testTransaction));
-        // to household
-        testTransaction.setCategoryId(HOUSEHOLD);
-        DBManager.getInstance().createTransaction(testTransaction);
-        Log.d("log", "testTransaction: " + testTransaction.toString());
+//        Transaction testTransaction = new Transaction();
+//        testTransaction.setDate("2017-06-01");
+//        testTransaction.setAmount("-13,12");
+//        testTransaction.setAccount("NL96BUNQ9900021843");
+//        testTransaction.setCounterpartyAccount("");
+//        testTransaction.setCounterpartyName("");
+//        testTransaction.setCounterpartyName("");
+//        testTransaction.setDescription("ALBERT HEIJN 1090 \\AMSTERDAM \\ BETAALAUTOMAAT 06-06-17 21:15 PASNR.102 CONTACTLOOS");
+//        testTransaction.setAccountId(CsvImportHelper.getAccountId(testTransaction));
+//        // to household
+//        testTransaction.setCategoryId(HOUSEHOLD);
+//        dbManager.createTransaction(testTransaction);
+//        Log.d("log", "testTransaction: " + testTransaction.toString());
 
         ArrayList<Transaction> preparedNewTransactions = prepareTransactions(newTransactions);
         Log.d("log", "new transactions: " + newTransactions.toString());
 
         ArrayList<Transaction> preparedExistingTransactions =
-                prepareTransactions(DBManager.getInstance().readTransactions(null));
+                prepareTransactions(dbManager.readTransactions(null));
         Log.d("log", "existing transactions: " + preparedExistingTransactions.toString());
 
 
@@ -87,10 +92,10 @@ public class CategoryHelper {
                 newTransactions.get(i).setCategoryId(UNCATEGORIZED);
             }
 
-            DBManager.getInstance().createTransaction(newTransactions.get(i));
+            dbManager.createTransaction(newTransactions.get(i));
             i++;
         }
-        return DBManager.getInstance().readTransactions(null);
+        return dbManager.readTransactions(null);
     }
 
     /**
@@ -115,6 +120,11 @@ public class CategoryHelper {
     }
 
     public static void setupDefaultCategories(Account newAccount) {
+        // make sure there is a DBManager instance
+        if (dbManager == null) {
+            dbManager = DBManager.getInstance();
+        }
+
         // list of root category names
         ArrayList<String> defaultRootNames = new ArrayList<>();
         defaultRootNames.add("Uncategorized");
@@ -123,7 +133,7 @@ public class CategoryHelper {
 
         // create root categories
         for (String name:defaultRootNames) {
-            DBManager.getInstance().createCategory(new Category(newAccount.getId(), -1, name));
+            dbManager.createCategory(new Category(newAccount.getId(), -1, name));
         }
 
         // list of default subcategory names
@@ -135,7 +145,7 @@ public class CategoryHelper {
 
         // create default subcategories
         for (Category category: defaultCategories) {
-            DBManager.getInstance().createCategory(category);
+            dbManager.createCategory(category);
         }
     }
 }

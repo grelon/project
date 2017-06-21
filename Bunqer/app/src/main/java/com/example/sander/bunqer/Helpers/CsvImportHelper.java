@@ -57,11 +57,15 @@ public class CsvImportHelper {
                 // skip over first line
                 bReader.readLine();
 
+                // for testing
                 int i = 0;
 
                 String line;
                 while ((line = bReader.readLine()) != null) {
+
+                    // for testing
                     Log.d("log", "iteratie: " + i);
+
                     // formatting and splitting of line
                     line = line.replace("\"", "");
 
@@ -77,6 +81,8 @@ public class CsvImportHelper {
                     transaction.setDescription(rowData[5]);
                     transaction.setAccountId(getAccountId(transaction));
                     transactions.add(transaction);
+
+                    // for testing
                     i++;
                 }
 

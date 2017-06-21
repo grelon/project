@@ -22,8 +22,8 @@ public class ImportActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_account);
-        getSupportActionBar().setTitle("Add new account");
+        setContentView(R.layout.activity_import);
+        getSupportActionBar().setTitle("Importing transactions");
 
         // hide unnecessary views
         findViewById(R.id.accountname).setVisibility(View.GONE);

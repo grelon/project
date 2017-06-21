@@ -59,6 +59,10 @@ public class Transaction implements Serializable {
         return category;
     }
 
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
     public int getCategoryId() {
         return categoryId;
     }

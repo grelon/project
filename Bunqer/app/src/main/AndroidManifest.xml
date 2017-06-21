@@ -23,9 +23,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MonthSelectorActivity" />
-        <activity android:name=".CategoriesActivity" />
-        <activity android:name=".SubCategoriesActivity" />
         <activity android:name=".TransactionListActivity" />
         <activity android:name=".SingleTransactionActivity" />
     </application>

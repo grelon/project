@@ -8,4 +8,6 @@
     </string-array>
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>
+    <string name="change_category">Change category</string>
+    <string name="bottomsheetdialog_change_category">Change the category of this transaction to:</string>
 </resources>
