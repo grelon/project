@@ -162,7 +162,10 @@ public class Transaction implements Serializable {
         // check this transaction against all other transactions
         if (transactions.size() > 0) {
             for (Transaction transaction : transactions) {
-                if (transaction.getCounterpartyAccount().equals(this.counterpartyAccount)) {
+                if (transaction.getDate().equals(this.date) &&
+                        transaction.getAmount() == this.amount &&
+                        transaction.getDescription().equals(this.description) &&
+                        transaction.getCounterpartyAccount().equals(this.counterpartyAccount)) {
 
                     Log.d("log", "isnotduplicate: false");
                     // transaction is a duplicate
