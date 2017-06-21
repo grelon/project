@@ -1,6 +1,8 @@
 # Project
 Final project for Minor Programmeren
 
+[![BCH compliance](https://bettercodehub.com/edge/badge/grelon/project?branch=master)](https://bettercodehub.com/)
+
 ## Proposal
 
 ### Problem
