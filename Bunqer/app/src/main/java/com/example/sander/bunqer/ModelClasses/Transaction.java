@@ -3,6 +3,8 @@ package com.example.sander.bunqer.ModelClasses;
  * Created by sander on 8-6-17.
  */
 
+import android.util.Log;
+
 import com.example.sander.bunqer.DB.DBManager;
 
 import java.io.Serializable;
@@ -158,20 +160,18 @@ public class Transaction implements Serializable {
         ArrayList<Transaction> transactions = DBManager.getInstance().readTransactions(null);
 
         // check this transaction against all other transactions
-        if (!transactions.isEmpty()) {
+        if (transactions.size() > 0) {
             for (Transaction transaction : transactions) {
-                if (transaction.getDate() != this.date &&
-                        transaction.getAmount() != this.amount &&
-                        transaction.getDescription() != this.description &&
-                        transaction.getCounterpartyAccount() != this.counterpartyAccount) {
+                if (transaction.getCounterpartyAccount().equals(this.counterpartyAccount)) {
 
-                    // transaction is not a duplicate
-                    return true;
+                    Log.d("log", "isnotduplicate: false");
+                    // transaction is a duplicate
+                    return false;
                 }
             }
         }
-
-        // transaction is a duplicate
-        return false;
+        Log.d("log", "isnotduplicate: true");
+        // transaction is not a duplicate
+        return true;
     }
 }
