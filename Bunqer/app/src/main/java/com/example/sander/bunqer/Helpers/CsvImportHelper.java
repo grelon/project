@@ -80,12 +80,15 @@ public class CsvImportHelper {
                     transaction.setCounterpartyName(rowData[4]);
                     transaction.setDescription(rowData[5]);
                     transaction.setAccountId(getAccountId(transaction));
-                    transactions.add(transaction);
+
+                    // don't add if identical transaction already exists
+                    if (transaction.isNotDuplicate()) {
+                        transactions.add(transaction);
+                    }
 
                     // for testing
                     i++;
                 }
-
                 // categorize transactions
                 Log.d("log","completing import");
                 return CategoryHelper.categorize(transactions);

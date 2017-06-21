@@ -277,6 +277,6 @@ public class DBManager {
         ContentValues values = new ContentValues();
         values.put(DBHelper.TRANSACTION_CATEGORY_ID, transaction.getCategoryId());
         db.update(DBHelper.TABLE_TRANSACTIONS, values, DBHelper.TRANSACTION_ID + " = ?",
-                new String[] {String.valueOf(transaction.getCategoryId())});
+                new String[] {String.valueOf(transaction.getId())});
     }
 }

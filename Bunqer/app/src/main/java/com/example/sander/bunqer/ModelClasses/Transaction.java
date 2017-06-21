@@ -6,6 +6,7 @@ package com.example.sander.bunqer.ModelClasses;
 import com.example.sander.bunqer.DB.DBManager;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Transaction implements Serializable {
     private int id;
@@ -151,5 +152,26 @@ public class Transaction implements Serializable {
         String formattedAmount = String.valueOf(amount);
         // TODO: 20-6-17 Format amount with a StringBuilder or something like that.
         return formattedAmount;
+    }
+
+    public boolean isNotDuplicate() {
+        ArrayList<Transaction> transactions = DBManager.getInstance().readTransactions(null);
+
+        // check this transaction against all other transactions
+        if (!transactions.isEmpty()) {
+            for (Transaction transaction : transactions) {
+                if (transaction.getDate() != this.date &&
+                        transaction.getAmount() != this.amount &&
+                        transaction.getDescription() != this.description &&
+                        transaction.getCounterpartyAccount() != this.counterpartyAccount) {
+
+                    // transaction is not a duplicate
+                    return true;
+                }
+            }
+        }
+
+        // transaction is a duplicate
+        return false;
     }
 }

@@ -74,7 +74,7 @@ public class Category implements Serializable {
         }
 
         // if the transactions haven't been assigned to categories yet
-        if (transactions == null) {
+        if (transactions.isEmpty()) {
             updateTransactions();
         }
 
