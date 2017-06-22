@@ -1,6 +1,7 @@
 package com.example.sander.bunqer;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
@@ -24,6 +25,8 @@ import java.util.ArrayList;
 public class SingleTransactionActivity extends AppCompatActivity {
 
     Transaction transaction;
+    TextView tvSingleTransactionCategory;
+    private int originalCategoryId;
 
     View bottomSheetView;
     BottomSheetDialog bottomSheetDialog;
@@ -40,13 +43,16 @@ public class SingleTransactionActivity extends AppCompatActivity {
         // get transaction object from intent
         transaction = (Transaction) getIntent().getExtras().getSerializable("transaction");
 
+        // remember its category
+        originalCategoryId = transaction.getCategoryId();
+
         // get views
         TextView tvSingleTransactionCounterpartyName = (TextView) findViewById(R.id.single_transaction_counterpartyName);
         TextView tvSingleTransactionCounterpartyAccount = (TextView) findViewById(R.id.single_transaction_counterpartyAccount);
         TextView tvSingleTransactionDate = (TextView) findViewById(R.id.single_transaction_date);
         TextView tvSingleTransactionAmount = (TextView) findViewById(R.id.single_transaction_amount);
         TextView tvSingleTransactionDescription = (TextView) findViewById(R.id.single_transaction_description);
-        TextView tvSingleTransactionCategory = (TextView) findViewById(R.id.single_transaction_category);
+        tvSingleTransactionCategory = (TextView) findViewById(R.id.single_transaction_category);
         ImageButton ibSingleTransactionChangeCategory = (ImageButton) findViewById(R.id.single_transaction_change_category);
 
         // set views
@@ -107,6 +113,8 @@ public class SingleTransactionActivity extends AppCompatActivity {
                 transaction.setCategoryId(selectedCategory.getId());
                 transaction.setCategory(selectedCategory.getName());
                 DBManager.getInstance().updateTransaction(transaction);
+                bottomSheetDialog.hide();
+                tvSingleTransactionCategory.setText(transaction.getCategory());
             }
         });
     }
@@ -122,5 +130,18 @@ public class SingleTransactionActivity extends AppCompatActivity {
                 stubCategories.add(category);
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent toTransactionListIntent = new Intent(this, TransactionListActivity.class);
+
+        // give TransactionList a fresh copy of the category
+        Category category = DBManager.getInstance().readCategories(originalCategoryId).get(0);
+        toTransactionListIntent.putExtra("category", category);
+
+        startActivity(toTransactionListIntent);
+        finish();
     }
 }

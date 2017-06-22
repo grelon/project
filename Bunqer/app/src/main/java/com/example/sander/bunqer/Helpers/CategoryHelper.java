@@ -23,6 +23,7 @@ public class CategoryHelper {
     public static final int EXPENSES = 3;
     public static final int GIFT = 4;
     public static final int HOUSEHOLD = 5;
+    public static final int ROOT = -1;
 
     private static DBManager dbManager;
 
@@ -109,33 +110,20 @@ public class CategoryHelper {
 
         // create root categories
         for (String name:defaultRootNames) {
-            dbManager.createCategory(new Category(newAccount.getId(), -1, name));
+            dbManager.createCategory(new Category(newAccount.getId(), ROOT, name));
         }
 
         // list of default subcategory names
         ArrayList<Category> defaultCategories = new ArrayList<>();
-        defaultCategories.add(new Category(newAccount.getId(), INCOME, "Gift"));
         defaultCategories.add(new Category(newAccount.getId(), INCOME, "Salary"));
         defaultCategories.add(new Category(newAccount.getId(), INCOME, "Scholarship"));
         defaultCategories.add(new Category(newAccount.getId(), INCOME, "Benefits"));
         defaultCategories.add(new Category(newAccount.getId(), INCOME, "Other income"));
 
-        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Groceries"));
-        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Rent"));
-        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Utilities"));
-        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Taxes"));
+        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Household"));
+        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Housing costs"));
         defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Subscriptions"));
-        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Telecom"));
-
-        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Medical"));
-        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Insurances"));
-        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Transportation"));
-
-        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Clothes"));
-        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Education"));
-        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Events"));
-        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Sports"));
-
+        defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Transport"));
         defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Food and drinks"));
         defaultCategories.add(new Category(newAccount.getId(), EXPENSES, "Other expenses"));
 

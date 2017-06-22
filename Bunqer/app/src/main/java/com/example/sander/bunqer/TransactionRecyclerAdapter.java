@@ -3,6 +3,7 @@ package com.example.sander.bunqer;
  * Created by sander on 15-6-17.
  */
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 
 public class TransactionRecyclerAdapter extends RecyclerView.Adapter<TransactionRecyclerAdapter.TransactionHolder> {
 
+    public static Activity mActivity;
     private ArrayList<Transaction> mTransactions;
 
     public static class TransactionHolder extends RecyclerView.ViewHolder
@@ -44,10 +46,12 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
         public void onClick(View v) {
             Log.d("log", "transaction clicked");
 
+            // send user to single transaction activity
             Context context = itemView.getContext();
             Intent toSingleTransactionIntent = new Intent(context, SingleTransactionActivity.class);
             toSingleTransactionIntent.putExtra("transaction", mTransaction);
             context.startActivity(toSingleTransactionIntent);
+            mActivity.finish();
         }
 
         public void bindTransaction(Transaction transaction) {
@@ -59,8 +63,9 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
         }
     }
 
-
-    public TransactionRecyclerAdapter(ArrayList<Transaction> mTransactions) {
+    // constructor
+    public TransactionRecyclerAdapter(ArrayList<Transaction> mTransactions, Activity mActivity) {
+        this.mActivity = mActivity;
         this.mTransactions = mTransactions;
     }
 

@@ -10,4 +10,5 @@
     <string name="drawer_close">close</string>
     <string name="change_category">Change category</string>
     <string name="bottomsheetdialog_change_category">Change the category of this transaction to:</string>
+    <string name="empty_category">This category is empty.</string>
 </resources>
