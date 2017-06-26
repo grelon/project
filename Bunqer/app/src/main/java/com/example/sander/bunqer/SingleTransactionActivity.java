@@ -32,7 +32,6 @@ public class SingleTransactionActivity extends AppCompatActivity {
     BottomSheetDialog bottomSheetDialog;
     BottomSheetBehavior bottomSheetBehavior;
 
-    ListView categoriesList;
     ArrayList<Category> stubCategories = new ArrayList<>();
 
     @Override
@@ -57,7 +56,7 @@ public class SingleTransactionActivity extends AppCompatActivity {
 
         // set views
         tvSingleTransactionCounterpartyName.setText(transaction.getCounterpartyName());
-        tvSingleTransactionCounterpartyAccount.setText(transaction.getCounterpartyName());
+        tvSingleTransactionCounterpartyAccount.setText(transaction.getCounterpartyAccount());
         tvSingleTransactionDate.setText(transaction.getDate());
         tvSingleTransactionAmount.setText(transaction.getFormattedAmount());
         tvSingleTransactionDescription.setText(transaction.getDescription());
@@ -72,8 +71,6 @@ public class SingleTransactionActivity extends AppCompatActivity {
         bottomSheetDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
-                // TODO: 21-6-17 inflate list of categories on show
-                Log.d("log", "onShow do this");
                 showCategories();
             }
         });
@@ -136,6 +133,8 @@ public class SingleTransactionActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         Intent toTransactionListIntent = new Intent(this, TransactionListActivity.class);
+
+        // try to categorize other transactions in category based on
 
         // give TransactionList a fresh copy of the category
         Category category = DBManager.getInstance().readCategories(originalCategoryId).get(0);

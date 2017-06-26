@@ -58,7 +58,7 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
             mTransaction = transaction;
             tvTransactionDescription.setText(transaction.getDescription());
             tvTransactionDate.setText(transaction.getDate());
-            tvTransactionAmount.setText(String.valueOf(transaction.getAmount()));
+            tvTransactionAmount.setText(transaction.getFormattedAmount());
             tvTransactionCategory.setText(transaction.getCategory());
         }
     }

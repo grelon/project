@@ -3,10 +3,12 @@ package com.example.sander.bunqer;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.example.sander.bunqer.DB.DBManager;
 import com.example.sander.bunqer.Helpers.CategoryHelper;
 import com.example.sander.bunqer.Helpers.ChartHelper;
+import com.example.sander.bunqer.Helpers.CurrencyFormatter;
 import com.example.sander.bunqer.ModelClasses.Category;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
@@ -63,6 +65,11 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
     }
 
     private void setChart(PieData data) {
+        if (data != null) {
+            // set currency formatter if data isn't null
+            data.setValueFormatter(new CurrencyFormatter());
+        }
+
         mPieChart.setData(data);
 
         // set an empty description
@@ -103,26 +110,31 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
     @Override
     public void onBackPressed() {
 
-        // if there are parent categories, render their chart
-        Category category = (Category) mPieChart.getData().getDataSet().getEntryForIndex(0).getData();
-        ArrayList<Category> parentCategories = new ArrayList<>();
+        try {
+            // if there are parent categories, render their chart
+            Category category = (Category) mPieChart.getData().getDataSet().getEntryForIndex(0).getData();
+            ArrayList<Category> parentCategories = new ArrayList<>();
 
-        // check if there are parent categories
-        if (category.getParentId() > 0) {
-            // if there are, go get it and add it to list
-            Category parentCategory = DBManager.getInstance().readCategories(category.getParentId()).get(0);
-            for (Category cat:DBManager.getInstance().readCategories(null))
-                if (parentCategory.getParentId() == cat.getParentId()) {
-                    parentCategories.add(cat);
-                }
+            // check if there are parent categories
+            if (category.getParentId() > 0) {
+                // if there are, go get it and add it to list
+                Category parentCategory = DBManager.getInstance().readCategories(category.getParentId()).get(0);
+                for (Category cat : DBManager.getInstance().readCategories(null))
+                    if (parentCategory.getParentId() == cat.getParentId()) {
+                        parentCategories.add(cat);
+                    }
 
-            // set up the chart with the parent categories
-            PieData data = mChartHelper.setupPieData(parentCategories);
-            setChart(data);
-        }
+                // set up the chart with the parent categories
+                PieData data = mChartHelper.setupPieData(parentCategories);
+                setChart(data);
+            }
 
-        // otherwise exit the app
-        else {
+            // otherwise exit the app
+            else {
+                super.onBackPressed();
+            }
+        } catch (NullPointerException e) {
+            Log.d("log", "data is null");
             super.onBackPressed();
         }
     }

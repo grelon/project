@@ -14,11 +14,11 @@ public class CurrencyFormatter implements IValueFormatter {
     private DecimalFormat decimalFormat;
 
     public CurrencyFormatter() {
-        decimalFormat = new DecimalFormat("###.###.##0.00");
+        decimalFormat = new DecimalFormat("###,###,##0.00");
     }
 
     @Override
     public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-        return null;
+        return "€ " + decimalFormat.format(value/100);
     }
 }

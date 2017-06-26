@@ -1,31 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:paddingBottom="16dp">
 
     <TextView
         android:id="@+id/transaction_recycler_tv_description"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        tools:text="Description"/>
+        android:textAppearance="@android:style/TextAppearance.Material"
+        android:textSize="16sp"
+        android:maxLines="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Description"
+        app:layout_constraintEnd_toStartOf="@+id/transaction_recycler_tv_amount"
+        android:layout_marginEnd="8dp" />
 
     <TextView
         android:id="@+id/transaction_recycler_tv_date"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        tools:text="Date"/>
+        tools:text="Date"
+        app:layout_constraintStart_toStartOf="@id/transaction_recycler_tv_description"
+        app:layout_constraintTop_toBottomOf="@id/transaction_recycler_tv_description"/>
 
     <TextView
         android:id="@+id/transaction_recycler_tv_amount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="Amount"/>
+        tools:text="Amount"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <TextView
         android:id="@+id/transaction_recycler_tv_category"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="Category"/>
-</LinearLayout>
+        android:textStyle="italic"
+        app:layout_constraintStart_toStartOf="@id/transaction_recycler_tv_description"
+        app:layout_constraintTop_toBottomOf="@id/transaction_recycler_tv_date"
+        tools:text="Category" />
+</android.support.constraint.ConstraintLayout>

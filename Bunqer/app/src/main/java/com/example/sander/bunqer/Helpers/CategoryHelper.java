@@ -6,6 +6,7 @@ package com.example.sander.bunqer.Helpers;
  */
 
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.example.sander.bunqer.DB.DBManager;
@@ -14,6 +15,7 @@ import com.example.sander.bunqer.ModelClasses.Category;
 import com.example.sander.bunqer.ModelClasses.Transaction;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import info.debatty.java.stringsimilarity.NormalizedLevenshtein;
 
@@ -38,7 +40,7 @@ public class CategoryHelper {
         }
 
         ArrayList<Transaction> preparedNewTransactions = prepareTransactions(newTransactions);
-        Log.d("log", "new transactions: " + newTransactions.toString());
+        Log.d("log", "new transactions: " + preparedNewTransactions.toString());
 
         ArrayList<Transaction> preparedExistingTransactions =
                 prepareTransactions(dbManager.readTransactions(null));
@@ -84,16 +86,48 @@ public class CategoryHelper {
      * @return
      */
     private static ArrayList<Transaction> prepareTransactions(ArrayList<Transaction> transactions) {
-        ArrayList<Transaction> preparedTransactions = transactions;
+        ArrayList<Transaction> preparedTransactions = Arrays.copyOf(transactions);
 
         for (Transaction transaction:preparedTransactions) {
-            String description = transaction.getDescription();
-            if (description.contains("\\")) {
-                transaction.setDescription(description.substring(0, description.indexOf("\\")));
-            }
+            // remove words with all caps
+            String newDescription = formatTransactionDescription(transaction.getDescription());
+
+            // update description a working format for categorize
+            transaction.setDescription(newDescription);
         }
 
         return preparedTransactions;
+    }
+
+    private static String formatTransactionDescription(String description) {
+        String[] words = description.split(" ");
+        ArrayList<String> newWords = new ArrayList<>();
+
+        // if the last three words of the description are all uppercase, remove them from description
+        for (int i = 0 ; i < words.length; i++) {
+
+            // because this isn't a description: "AMSTERDAM NL"
+            if (words.length < 3) {
+                newWords.add(words[i]);
+            }
+
+            // but this is: "Something AMSTERDAM NL"
+            else if (i < words.length - 2) {
+                    newWords.add(words[i]);
+                }
+                else if (!isUpperCase(words[i])) {
+                        newWords.add(words[i]);
+                    }
+
+//            if (i < words.length - 2 || !isUpperCase(words[i])) {
+//                newWords.add(words[i]);
+//                }
+        }
+
+        String newDescription = TextUtils.join(" ", newWords);
+
+        Log.d("log", "newDescription: " + newDescription);
+        return newDescription;
     }
 
     public static void setupDefaultCategories(Account newAccount) {
@@ -131,5 +165,20 @@ public class CategoryHelper {
         for (Category category: defaultCategories) {
             dbManager.createCategory(category);
         }
+    }
+
+    /**
+     * Checks if a string is all uppercase. Stole it from: https://stackoverflow.com/a/677592
+     */
+    public static boolean isUpperCase(String s)
+    {
+        for (int i=0; i<s.length(); i++)
+        {
+            if (!Character.isUpperCase(s.charAt(i)))
+            {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -79,13 +79,15 @@ public class CsvImportHelper {
                     transaction.setAccount(rowData[2]);
                     transaction.setCounterpartyAccount(rowData[3]);
                     transaction.setCounterpartyName(rowData[4]);
-                    transaction.setDescription(rowData[5].replaceAll("[\\W]", ""));
+                    transaction.setDescription(rowData[5].replaceAll("[^a-zA-Z\\d\\s]", ""));
                     transaction.setAccountId(getAccountId(transaction));
 
                     // don't add if identical transaction already exists
                     if (transaction.isNotDuplicate()) {
                         transactions.add(transaction);
                     }
+
+                    Log.d("log", "getTransactionlist: transactions: " + transactions.toString());
 
                     // for testing
                     i++;

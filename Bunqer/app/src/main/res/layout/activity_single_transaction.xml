@@ -12,9 +12,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        tools:text="Counterparty Name"
+        android:textAppearance="@android:style/TextAppearance.Material"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        tools:text="Counterparty Name" />
 
     <TextView
         android:id="@+id/single_transaction_counterpartyAccount"

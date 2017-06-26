@@ -8,7 +8,9 @@ import android.util.Log;
 import com.example.sander.bunqer.DB.DBManager;
 
 import java.io.Serializable;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class Transaction implements Serializable {
     private int id;
@@ -144,16 +146,15 @@ public class Transaction implements Serializable {
                 ", account='" + account + '\'' +
                 ", category='" + category + '\'' +
                 ", categoryId=" + categoryId +
-                ", single_transaction_counterpartyName='" + counterpartyName + '\'' +
-                ", single_transaction_counterpartyAccount='" + counterpartyAccount + '\'' +
+                ", counterpartyName='" + counterpartyName + '\'' +
+                ", counterpartyAccount='" + counterpartyAccount + '\'' +
                 ", description='" + description + '\'' +
                 '}';
     }
 
     public String getFormattedAmount() {
-        String formattedAmount = String.valueOf(amount);
-        // TODO: 20-6-17 Format amount with a StringBuilder or something like that.
-        return formattedAmount;
+        NumberFormat format = NumberFormat.getCurrencyInstance(Locale.GERMANY);
+        return format.format(amount/100);
     }
 
     public boolean isNotDuplicate() {
