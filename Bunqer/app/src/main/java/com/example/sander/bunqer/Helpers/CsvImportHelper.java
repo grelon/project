@@ -66,8 +66,9 @@ public class CsvImportHelper {
                     // for testing
                     Log.d("log", "iteratie: " + i);
 
-                    // formatting and splitting of line
+                    // general formatting and splitting of line
                     line = line.replace("\"", "");
+                    Log.d("log", "getTransactionlist.validate: " + line);
 
                     String[] rowData = line.split(";");
 
@@ -78,7 +79,7 @@ public class CsvImportHelper {
                     transaction.setAccount(rowData[2]);
                     transaction.setCounterpartyAccount(rowData[3]);
                     transaction.setCounterpartyName(rowData[4]);
-                    transaction.setDescription(rowData[5]);
+                    transaction.setDescription(rowData[5].replaceAll("[\\W]", ""));
                     transaction.setAccountId(getAccountId(transaction));
 
                     // don't add if identical transaction already exists

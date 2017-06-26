@@ -17,6 +17,7 @@ import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
@@ -41,26 +42,19 @@ public class ChartHelper {
         if (categories.size() > 0) {
             List<PieEntry> entries = new ArrayList<>();
 
-            int total = 0;
-
-            // create list of categories that have a total value higher than 0
+            // make list of categories that have a value other than 0
             ArrayList<Category> usedCategories = new ArrayList<>();
-
-            // calculate absolute total of all categories
             for (Category category:categories) {
 
                 // add category to list if its total value is not 0
                 if (category.getTotalValue() != 0) {
                     usedCategories.add(category);
-                    total += (abs(category.getTotalValue()));
                 }
             }
 
-
             // calculate percentages of total per category and add PieEntries
             for (Category category:usedCategories) {
-                float percentage = (abs(category.getTotalValue()) * 100.0f) / total;
-                entries.add(new PieEntry(percentage, category.getName(), category));
+                entries.add(new PieEntry(abs(category.getTotalValue()), category.getName(), category));
             }
 
             PieDataSet set = new PieDataSet(entries, "Total");
@@ -81,9 +75,8 @@ public class ChartHelper {
         return null;
     }
 
-    public PieDataSet rebuildDataset(PieEntry selectedEntry, PieChart pieChart) {
+    public PieData rebuildPieData(PieEntry selectedEntry, PieChart pieChart) {
         ArrayList<Category> newCategories = new ArrayList<>();
-        int newCategoriesTotal = 0;
 
         Category category = (Category) selectedEntry.getData();
 
@@ -96,28 +89,27 @@ public class ChartHelper {
 
             // add all categories in entry
             for (Category subCategory:category.getSubcategories()) {
-                int totalValue = subCategory.getTotalValue();
+                int subCategoryTotalValueValue = subCategory.getTotalValue();
 
                 // if the total value of a category is 0, don't include the category
-                if (totalValue != 0) {
+                if (subCategoryTotalValueValue != 0) {
                     newCategories.add(subCategory);
-                    newCategoriesTotal += totalValue;
                 }
             }
 
             // add entries to list
             for (Category newCategory:newCategories) {
                 entries.add(new PieEntry(
-                        (float)newCategory.getTotalValue() / newCategoriesTotal*100,
+                        (float) abs(newCategory.getTotalValue()),
                         newCategory.getName(), newCategory));
             }
 
-            PieDataSet set = new PieDataSet(entries, "Expenses");
+            PieDataSet set = new PieDataSet(entries, selectedEntry.getLabel());
             set.setSliceSpace(2f);
             set.setSelectionShift(0f);
             set.setColors(ColorTemplate.MATERIAL_COLORS);
 
-            return set;
+            return new PieData(set);
         }
 
         // otherwise send to Transaction List of category

@@ -3,13 +3,13 @@ package com.example.sander.bunqer;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.example.sander.bunqer.DB.DBManager;
 import com.example.sander.bunqer.Helpers.CategoryHelper;
 import com.example.sander.bunqer.Helpers.ChartHelper;
 import com.example.sander.bunqer.ModelClasses.Category;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
@@ -22,6 +22,7 @@ import java.util.ArrayList;
 
 public class ChartActivity extends AppCompatActivity implements OnChartValueSelectedListener {
 
+    private static final String NO_DATA_TEXT = "Sorry, no transactions found. Upload your latest transactions from the Bunq app.";
     private ChartHelper mChartHelper;
     private PieChart mPieChart;
 
@@ -63,6 +64,16 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
 
     private void setChart(PieData data) {
         mPieChart.setData(data);
+
+        // set an empty description
+        Description description = new Description();
+        description.setText("");
+        mPieChart.setDescription(description);
+
+        // set text when no data is available
+        mPieChart.setNoDataText(NO_DATA_TEXT);
+        mPieChart.setNoDataTextColor(R.color.colorPrimaryDark);
+
         mPieChart.setTouchEnabled(true);
         mPieChart.setOnChartValueSelectedListener(this);
         mPieChart.invalidate();
@@ -76,17 +87,12 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
 
     @Override
     public void onValueSelected(Entry entry, Highlight h) {
-        PieDataSet newSet = mChartHelper.rebuildDataset((PieEntry) entry, mPieChart);
+        PieData newData = mChartHelper.rebuildPieData((PieEntry) entry, mPieChart);
 
-        if (newSet != null) {
+        if (newData != null) {
             // change datasets
             mPieChart.getData().removeDataSet(0);
-            mPieChart.getData().setDataSet(newSet);
-
-            // update chart with new dataset
-            mPieChart.getData().notifyDataChanged();
-            mPieChart.notifyDataSetChanged();
-            mPieChart.invalidate();
+            setChart(newData);
         }
     }
 

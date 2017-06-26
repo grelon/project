@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.sander.bunqer.DB.DBManager;
 import com.example.sander.bunqer.Helpers.CsvImportHelper;
@@ -39,15 +40,16 @@ public class ImportActivity extends AppCompatActivity {
             Log.d("log", "SEND intent with CSV type detected");
 
             // try to get list of transaction objects
+            // TODO: 26-6-17 Refactor because transactions is never used
             transactions = CsvImportHelper.getTransactionList(getApplicationContext(), getIntent());
 
             sendToMonth();
 
             // testing grounds
-            dbManager = DBManager.getInstance();
-            Log.d("log", "accounts: " + dbManager.readAccounts().toString());
-            Log.d("log", "categories: " + dbManager.readCategories(null).toString());
-            Log.d("log", "transactions: " + dbManager.readTransactions(null).toString());
+//            dbManager = DBManager.getInstance();
+//            Log.d("log", "accounts: " + dbManager.readAccounts().toString());
+//            Log.d("log", "categories: " + dbManager.readCategories(null).toString());
+//            Log.d("log", "transactions: " + dbManager.readTransactions(null).toString());
         }
     }
 
