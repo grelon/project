@@ -41,3 +41,29 @@ Spoils of the week:
 + PieEntries can be passed Objects (such as category objects) which can come in handy.
 + A lot of unnecessary data is currently read from DB during queries. Figure out a way to make flexible CRUD methods (i.e. with where clauses and the like). This doesn't have priority since there the runtime of the current DB queries isn't noticable yet.
 
+# 18-6
+**Insights**
++ NormalizedLevenshtein with a threshold of 0.4 for similarity seems to work best at the moment.
++ By extending the Application class with a custom class, the application context can be accessed EVERYWHERE!
+
+# 19-6
+**Insights**
++ Getting transactions by category and passing category objects between methods is easier than passing lists of transactions between objects and constantly needing to read category info from the DB. Thus, the DB controlstructure needs to become category oriented. That's a lot of work though.
+
+# 20-6
+**Insights**
++ DB control methods are now category oriented. Reading a category fills it recursively with it's child categories and ultimately with the transactionlist of the stub (i.e. end) categories.
++ Infrastructure for supporting of subcategories has been laid out by doing this as well. Could be implemented in a v2.
++ Income, expenses and uncategorized are now also categories which improves maintainability.
+
+# 21-6
+**Insights**
++ Extendable listviews are not as easy as they seem to be and require a lot of extra classes (for adapters and stuff).
++ String similarity for automatic categorization now works properly. Smartphones have a lot more computing power than I thought.
++ Duplicate transactions (i.e. where all info is the same) are no longer added to DB.
+
+# 22-6
+**Insights**
++ Recategorizing transactions now works. Would be nice if the list of transactions in a category is update and automatically recategorized after a recategorization.
+
+

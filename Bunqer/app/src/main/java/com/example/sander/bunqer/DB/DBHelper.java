@@ -7,8 +7,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.example.sander.bunqer.Bunqer;
-
 class DBHelper extends SQLiteOpenHelper {
 
     /* Statics */
@@ -17,7 +15,7 @@ class DBHelper extends SQLiteOpenHelper {
     private static SQLiteDatabase db;
 
     // database name
-    public static final String DATABASE_NAME = "Bunqer.db";
+    public static final String DATABASE_NAME = "MyApp.db";
 
     // database version
     private static final int DATABASE_VERSION = 1;
@@ -114,7 +112,7 @@ class DBHelper extends SQLiteOpenHelper {
     // use getInstance() to instantiate dbHelper
     static synchronized DBHelper getInstance() {
         if (dbHelper == null) {
-            dbHelper = new DBHelper(Bunqer.getContext());
+            dbHelper = new DBHelper(MyApp.getContext());
         }
         db = dbHelper.getWritableDatabase();
         return dbHelper;
