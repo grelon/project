@@ -66,4 +66,8 @@ Spoils of the week:
 **Insights**
 + Recategorizing transactions now works. Would be nice if the list of transactions in a category is update and automatically recategorized after a recategorization.
 
+# 26-6
+**Insights**
++ Copying an array object in Java needs to be done with clone(). However, the immutable attributes of said object are ONLY copied by reference. Thus, clone() doesn't work if you want to deepcopy. Solved this, by not copying the object at all, but copying it's attributes.
+
 
