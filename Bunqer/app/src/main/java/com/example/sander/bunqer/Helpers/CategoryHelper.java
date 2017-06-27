@@ -15,7 +15,6 @@ import com.example.sander.bunqer.ModelClasses.Category;
 import com.example.sander.bunqer.ModelClasses.Transaction;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import info.debatty.java.stringsimilarity.NormalizedLevenshtein;
 
@@ -39,29 +38,27 @@ public class CategoryHelper {
             dbManager = DBManager.getInstance();
         }
 
-        ArrayList<Transaction> preparedNewTransactions = prepareTransactions(newTransactions);
-        Log.d("log", "new transactions: " + preparedNewTransactions.toString());
+        ArrayList<String> preparedNewDescriptions = prepareDescriptions(newTransactions);
 
-        ArrayList<Transaction> preparedExistingTransactions =
-                prepareTransactions(dbManager.readTransactions(null));
-        Log.d("log", "existing transactions: " + preparedExistingTransactions.toString());
+        ArrayList<Transaction> existingTransactions = dbManager.readTransactions(null);
+        ArrayList<String> preparedExistingDescriptions =
+                prepareDescriptions(existingTransactions);
 
         NormalizedLevenshtein normalizedLevenshtein = new NormalizedLevenshtein();
 
-        int i = 0;
-        for (Transaction newTransaction: preparedNewTransactions) {
-            for (Transaction existingTransaction:preparedExistingTransactions) {
+        for (int i = 0; i < preparedNewDescriptions.size(); i++) {
+            for (int j = 0; j < preparedExistingDescriptions.size(); j++) {
 
                 // don't compare against uncategorized transactions
-                if (existingTransaction.getCategoryId() != UNCATEGORIZED) {
+                if (existingTransactions.get(j).getCategoryId() != UNCATEGORIZED) {
 
                     // compare every new transaction to every existing transaction for similarity
-                    Double similarity = normalizedLevenshtein.similarity(newTransaction.getDescription(),
-                            existingTransaction.getDescription());
+                    Double similarity = normalizedLevenshtein.similarity(preparedNewDescriptions.get(i),
+                            preparedExistingDescriptions.get(j));
 
                     // very similar
                     if (similarity > 0.4) {
-                        newTransactions.get(i).setCategoryId(existingTransaction.getCategoryId());
+                        newTransactions.get(i).setCategoryId(existingTransactions.get(j).getCategoryId());
                     }
                 }
             }
@@ -72,7 +69,6 @@ public class CategoryHelper {
             }
 
             dbManager.createTransaction(newTransactions.get(i));
-            i++;
         }
         return dbManager.readTransactions(null);
     }
@@ -85,18 +81,15 @@ public class CategoryHelper {
      * @param transactions
      * @return
      */
-    private static ArrayList<Transaction> prepareTransactions(ArrayList<Transaction> transactions) {
-        ArrayList<Transaction> preparedTransactions = Arrays.copyOf(transactions);
-
-        for (Transaction transaction:preparedTransactions) {
-            // remove words with all caps
+    private static ArrayList<String> prepareDescriptions(ArrayList<Transaction> transactions) {
+        ArrayList<String> preparedDescriptions = new ArrayList<>();
+        for (Transaction transaction:transactions) {
             String newDescription = formatTransactionDescription(transaction.getDescription());
 
-            // update description a working format for categorize
-            transaction.setDescription(newDescription);
+            preparedDescriptions.add(newDescription);
         }
 
-        return preparedTransactions;
+        return preparedDescriptions;
     }
 
     private static String formatTransactionDescription(String description) {

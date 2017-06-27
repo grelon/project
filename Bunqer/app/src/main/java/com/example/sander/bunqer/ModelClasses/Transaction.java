@@ -12,7 +12,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class Transaction implements Serializable {
+public class Transaction implements Serializable, Cloneable{
     private int id;
     private String date;
     private int amount;
