@@ -40,9 +40,9 @@ public class ImportActivity extends AppCompatActivity {
             Log.d("log", "SEND intent with CSV type detected");
 
             // try to get list of transaction objects
-            // TODO: 26-6-17 Refactor because transactions is never used
             transactions = CsvImportHelper.getTransactionList(getApplicationContext(), getIntent());
 
+            Toast.makeText(this, transactions.size() + " new transactions added.", Toast.LENGTH_LONG).show();
             sendToMonth();
 
             // testing grounds

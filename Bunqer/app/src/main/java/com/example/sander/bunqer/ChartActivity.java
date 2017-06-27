@@ -12,12 +12,14 @@ import com.example.sander.bunqer.Helpers.CurrencyFormatter;
 import com.example.sander.bunqer.ModelClasses.Category;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
 
@@ -65,14 +67,22 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
     }
 
     private void setChart(PieData data) {
+        String label = "";
+
         if (data != null) {
             // set currency formatter if data isn't null
             data.setValueFormatter(new CurrencyFormatter());
+
+            // font settings for all values of Datasets in the chart
+            data.setValueTextColor(ColorTemplate.rgb("#ffffff"));
+            data.setValueTextSize(16);
+            label = data.getDataSet().getLabel();
         }
 
+        // populate chart with data
         mPieChart.setData(data);
 
-        // set an empty description
+        // remove description from chart
         Description description = new Description();
         description.setText("");
         mPieChart.setDescription(description);
@@ -81,8 +91,17 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
         mPieChart.setNoDataText(NO_DATA_TEXT);
         mPieChart.setNoDataTextColor(R.color.colorPrimaryDark);
 
+        // set centertext to label of current dataset
+        mPieChart.setCenterText(label);
+
+        // format legend
+        mChartHelper.formatLegend(mPieChart);
+
+        // enable user interaction
         mPieChart.setTouchEnabled(true);
         mPieChart.setOnChartValueSelectedListener(this);
+
+        // refresh chart to enable any changes made
         mPieChart.invalidate();
     }
 

@@ -14,6 +14,7 @@ import com.example.sander.bunqer.DB.DBManager;
 import com.example.sander.bunqer.ModelClasses.Category;
 import com.example.sander.bunqer.TransactionListActivity;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -58,11 +59,12 @@ public class ChartHelper {
             }
 
             PieDataSet set = new PieDataSet(entries, "Total");
+
             set.setSliceSpace(2f);
             set.setSelectionShift(0f);
 
             // set default colours
-            set.setColors(ColorTemplate.MATERIAL_COLORS);
+            set.setColors(ColorTemplate.JOYFUL_COLORS);
 
             // update chart label to parent name if it exists
             if (usedCategories.get(0).getParentId() != CategoryHelper.ROOT) {
@@ -107,7 +109,7 @@ public class ChartHelper {
             PieDataSet set = new PieDataSet(entries, selectedEntry.getLabel());
             set.setSliceSpace(2f);
             set.setSelectionShift(0f);
-            set.setColors(ColorTemplate.MATERIAL_COLORS);
+            set.setColors(ColorTemplate.JOYFUL_COLORS);
 
             return new PieData(set);
         }
@@ -122,5 +124,14 @@ public class ChartHelper {
 
         // shouldn't be able to get here
         return null;
+    }
+
+    public void formatLegend(PieChart mPieChart) {
+        Legend legend = mPieChart.getLegend();
+        legend.setOrientation(Legend.LegendOrientation.VERTICAL);
+        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+        legend.setYOffset(25);
+        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+        legend.setTextSize(12);
     }
 }

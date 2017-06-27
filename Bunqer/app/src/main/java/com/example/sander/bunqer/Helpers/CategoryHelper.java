@@ -70,7 +70,7 @@ public class CategoryHelper {
 
             dbManager.createTransaction(newTransactions.get(i));
         }
-        return dbManager.readTransactions(null);
+        return new ArrayList<>(dbManager.readTransactions(null).subList(0, newTransactions.size()));
     }
 
     /**
@@ -84,8 +84,11 @@ public class CategoryHelper {
     private static ArrayList<String> prepareDescriptions(ArrayList<Transaction> transactions) {
         ArrayList<String> preparedDescriptions = new ArrayList<>();
         for (Transaction transaction:transactions) {
+
+            // format the description
             String newDescription = formatTransactionDescription(transaction.getDescription());
 
+            // and add it to the list
             preparedDescriptions.add(newDescription);
         }
 
@@ -96,7 +99,7 @@ public class CategoryHelper {
         String[] words = description.split(" ");
         ArrayList<String> newWords = new ArrayList<>();
 
-        // if the last three words of the description are all uppercase, remove them from description
+        // if the last two words of the description are all uppercase, remove them from description
         for (int i = 0 ; i < words.length; i++) {
 
             // because this isn't a description: "AMSTERDAM NL"
@@ -108,19 +111,15 @@ public class CategoryHelper {
             else if (i < words.length - 2) {
                     newWords.add(words[i]);
                 }
-                else if (!isUpperCase(words[i])) {
-                        newWords.add(words[i]);
-                    }
 
-//            if (i < words.length - 2 || !isUpperCase(words[i])) {
-//                newWords.add(words[i]);
-//                }
+            // thus, if a descriptions contains at least 3 words, add only the words that aren't uppercase
+            else if (!isUpperCase(words[i])) {
+                    newWords.add(words[i]);
+                }
         }
 
-        String newDescription = TextUtils.join(" ", newWords);
-
-        Log.d("log", "newDescription: " + newDescription);
-        return newDescription;
+        // return the rebuilt description string for comparison
+        return TextUtils.join(" ", newWords);
     }
 
     public static void setupDefaultCategories(Account newAccount) {

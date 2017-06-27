@@ -134,13 +134,17 @@ public class SingleTransactionActivity extends AppCompatActivity {
         super.onBackPressed();
         Intent toTransactionListIntent = new Intent(this, TransactionListActivity.class);
 
-        // try to categorize other transactions in category based on
-
         // give TransactionList a fresh copy of the category
         Category category = DBManager.getInstance().readCategories(originalCategoryId).get(0);
         toTransactionListIntent.putExtra("category", category);
 
         startActivity(toTransactionListIntent);
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        bottomSheetDialog.dismiss();
+        super.onDestroy();
     }
 }

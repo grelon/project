@@ -29,7 +29,7 @@ public class CsvImportHelper {
     }
 
     /**
-     * A method that processes the CSV file that is shared through a intent.action.SEND. It returns
+     * Processes the CSV file that is shared through a intent.action.SEND. Returns
      * an ArrayList of Transaction objects.
      *
      * @param context
