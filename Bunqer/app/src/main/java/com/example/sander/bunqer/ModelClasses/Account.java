@@ -3,20 +3,21 @@ package com.example.sander.bunqer.ModelClasses;
  * Created by sander on 12-6-17.
  */
 
+/**
+ * Defines Account class. Accounts are primarily set up for future versions that support multiple
+ * accounts.
+ */
 public class Account {
-    /**
-     * Defines Account class
-     */
 
     private int id;
     private String number;
     private String name;
 
-    // constructors
-    // for constructing from database
+    // constructor
     public Account() {
     }
 
+    // constructor for setting up new accounts
     public Account(String account_number, String name) {
         this.number = account_number;
         this.name = name;

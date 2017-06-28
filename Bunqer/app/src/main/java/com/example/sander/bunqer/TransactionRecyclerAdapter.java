@@ -18,12 +18,12 @@ import com.example.sander.bunqer.ModelClasses.Transaction;
 
 import java.util.ArrayList;
 
-public class TransactionRecyclerAdapter extends RecyclerView.Adapter<TransactionRecyclerAdapter.TransactionHolder> {
+class TransactionRecyclerAdapter extends RecyclerView.Adapter<TransactionRecyclerAdapter.TransactionHolder> {
 
-    public static Activity mActivity;
+    private static Activity mActivity;
     private ArrayList<Transaction> mTransactions;
 
-    public static class TransactionHolder extends RecyclerView.ViewHolder
+    static class TransactionHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
 
         private TextView tvTransactionDescription;
@@ -32,7 +32,7 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
         private TextView tvTransactionCategory;
         private Transaction mTransaction;
 
-        public TransactionHolder(View itemView) {
+        TransactionHolder(View itemView) {
             super(itemView);
 
             tvTransactionDescription = (TextView)itemView.findViewById(R.id.transaction_recycler_tv_description);
@@ -44,8 +44,6 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
 
         @Override
         public void onClick(View v) {
-            Log.d("log", "transaction clicked");
-
             // send user to single transaction activity
             Context context = itemView.getContext();
             Intent toSingleTransactionIntent = new Intent(context, SingleTransactionActivity.class);
@@ -54,7 +52,7 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
             mActivity.finish();
         }
 
-        public void bindTransaction(Transaction transaction) {
+        void bindTransaction(Transaction transaction) {
             mTransaction = transaction;
             tvTransactionDescription.setText(transaction.getDescription());
             tvTransactionDate.setText(transaction.getDate());
@@ -64,8 +62,8 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
     }
 
     // constructor
-    public TransactionRecyclerAdapter(ArrayList<Transaction> mTransactions, Activity mActivity) {
-        this.mActivity = mActivity;
+    TransactionRecyclerAdapter(ArrayList<Transaction> mTransactions, Activity mActivity) {
+        TransactionRecyclerAdapter.mActivity = mActivity;
         this.mTransactions = mTransactions;
     }
 

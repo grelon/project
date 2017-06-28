@@ -20,8 +20,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-public class CsvImportHelper {
+/**
+ * Handles the import of the CSV file that is shared from external app.
+ */
 
+public class CsvImportHelper {
     private static DBManager dbManager;
 
     // constructor
@@ -65,7 +68,7 @@ public class CsvImportHelper {
     }
 
     /**
-     * Returns transaction list with transactions created from CSV.
+     * Reads over the contents of the buffered reader and returns a list of transactions.
      *
      * @param bReader
      * @return
@@ -73,9 +76,9 @@ public class CsvImportHelper {
      */
     private static ArrayList<Transaction> createTransactionFromCsv(BufferedReader bReader)
             throws IOException {
-
         ArrayList<Transaction> transactions = new ArrayList<>();
 
+        // start reading
         String line;
         while ((line = bReader.readLine()) != null) {
             // general formatting and splitting of line

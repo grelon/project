@@ -2,7 +2,6 @@ package com.example.sander.bunqer.Helpers;
 /*
  * Created by sander on 13-6-17.
  *
- * prepares data for charts
  */
 
 import android.app.Activity;
@@ -27,8 +26,11 @@ import java.util.Objects;
 
 import static java.lang.Math.abs;
 
+/**
+ * Helps chart object to build with several methods.
+ */
+
 public class ChartHelper {
-    private ArrayList<Category> categories;
     private Context context;
     private Activity activity;
 
@@ -37,34 +39,32 @@ public class ChartHelper {
         this.activity = activity;
     }
 
+    /**
+     * Turns a list of categories into a PieData object
+     * @param cats
+     * @return
+     */
     public PieData setupPieData(ArrayList<Category> cats) {
-        categories = cats;
+        ArrayList<Category> categories = cats;
         // assert if there is data
         if (categories.size() > 0) {
             List<PieEntry> entries = new ArrayList<>();
 
             // make list of categories that have a value other than 0
             ArrayList<Category> usedCategories = new ArrayList<>();
-            for (Category category:categories) {
-
-                // add category to list if its total value is not 0
+            for (Category category: categories) {
                 if (category.getTotalValue() != 0) {
                     usedCategories.add(category);
                 }
             }
 
-            // calculate percentages of total per category and add PieEntries
+            // create PieEntries out of categories and add them to the list
             for (Category category:usedCategories) {
                 entries.add(new PieEntry(abs(category.getTotalValue()), category.getName(), category));
             }
 
             PieDataSet set = new PieDataSet(entries, "Total");
-
-            set.setSliceSpace(2f);
-            set.setSelectionShift(0f);
-
-            // set default colours
-            set.setColors(ColorTemplate.JOYFUL_COLORS);
+            set = prettifySet(set);
 
             // update chart label to parent name if it exists
             if (usedCategories.get(0).getParentId() != CategoryHelper.ROOT) {
@@ -77,6 +77,14 @@ public class ChartHelper {
         return null;
     }
 
+    /**
+     * Rebuilds an existing PieData object with different data. Uses an existing chart and selected
+     * entry to figure out with what data the object needs to be build.
+     *
+     * @param selectedEntry
+     * @param pieChart
+     * @return
+     */
     public PieData rebuildPieData(PieEntry selectedEntry, PieChart pieChart) {
         ArrayList<Category> newCategories = new ArrayList<>();
 
@@ -107,9 +115,7 @@ public class ChartHelper {
             }
 
             PieDataSet set = new PieDataSet(entries, selectedEntry.getLabel());
-            set.setSliceSpace(2f);
-            set.setSelectionShift(0f);
-            set.setColors(ColorTemplate.JOYFUL_COLORS);
+            set = prettifySet(set);
 
             return new PieData(set);
         }
@@ -126,6 +132,24 @@ public class ChartHelper {
         return null;
     }
 
+    /**
+     * Prettifies dataset
+     *
+     * @param set
+     * @return
+     */
+    private PieDataSet prettifySet(PieDataSet set) {
+        set.setSliceSpace(2f);
+        set.setSelectionShift(0f);
+        set.setColors(ColorTemplate.JOYFUL_COLORS);
+        return set;
+    }
+
+    /**
+     * Prettifies legend.
+     *
+     * @param mPieChart
+     */
     public void formatLegend(PieChart mPieChart) {
         Legend legend = mPieChart.getLegend();
         legend.setOrientation(Legend.LegendOrientation.VERTICAL);

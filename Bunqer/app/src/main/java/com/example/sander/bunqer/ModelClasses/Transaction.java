@@ -3,8 +3,6 @@ package com.example.sander.bunqer.ModelClasses;
  * Created by sander on 8-6-17.
  */
 
-import android.util.Log;
-
 import com.example.sander.bunqer.DB.DBManager;
 
 import java.io.Serializable;
@@ -41,7 +39,7 @@ public class Transaction implements Serializable, Cloneable{
     }
 
     /**
-     * Category name is assigned when first called upon only, to prevent an infinite loop when
+     * Gets category name. This is assigned when first called upon only, to prevent an infinite loop when
      * creating categories from database.
      *
      * @return
@@ -94,7 +92,6 @@ public class Transaction implements Serializable, Cloneable{
     }
 
     public void setAmount(String amount) {
-        // standardizes amount format when setting it using a string
         this.amount = Integer.parseInt((amount.replace(".","").replace(",","")));
     }
 

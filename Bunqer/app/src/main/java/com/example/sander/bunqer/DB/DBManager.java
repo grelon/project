@@ -14,16 +14,18 @@ import com.example.sander.bunqer.ModelClasses.Transaction;
 
 import java.util.ArrayList;
 
+/**
+ * Singleton that is calls DBHelper to create a DB if needed, but also defines all database
+ * manipulation methods. Each DB table has got it's own CRUD methods.
+ */
+
 public class DBManager {
-    private static DBHelper dbHelper;
     private static SQLiteDatabase db;
     private static DBManager dbManager;
 
-    private static final int ROOT = -1;
-
     // constructor
     private DBManager() {
-        dbHelper = DBHelper.getInstance();
+        DBHelper dbHelper = DBHelper.getInstance();
         db = dbHelper.getWritableDatabase();
     }
 
@@ -32,10 +34,6 @@ public class DBManager {
             dbManager = new DBManager();
         }
         return dbManager;
-    }
-
-    private static void setupDatabase() {
-
     }
 
     // CRUD: accounts table
@@ -130,40 +128,65 @@ public class DBManager {
         }
         cursor.close();
 
-        // populate subcategory arrays of all categories
+        // populate categories and connect them to any parents
+        allCategories = organizeCategories(allCategories);
+
+        if (categoryId == null) {
+            // if a categoryId isn't specified, return a list of rootcategories
+            return getRootCategories(allCategories);
+        }
+        else {
+            // otherwise, return a list with only the specified category
+            return getSingleCategory(allCategories, categoryId);
+        }
+    }
+
+    private ArrayList<Category> getSingleCategory(ArrayList<Category> allCategories, int categoryId) {
+        ArrayList<Category> singleCategory = new ArrayList<>();
         for (Category category:allCategories) {
+            if (category.getId() == categoryId) {
+                singleCategory.add(category);
+            }
+        }
+        return singleCategory;
+    }
+
+    /**
+     * returns a list of organized and populated rootcategories.
+     *
+     * @param allCategories
+     */
+    private ArrayList<Category> getRootCategories(ArrayList<Category> allCategories) {
+        ArrayList<Category> rootCategories = new ArrayList<>();
+        for (Category category:allCategories){
+            if (category.getParentId() == CategoryHelper.ROOT) {
+                rootCategories.add(category);
+            }
+        }
+        return rootCategories;
+    }
+
+    /**
+     * Helps readCategories to organize the read categories into ordered objects where the
+     * transactionlists are populated.
+     *
+     * @param categories
+     * @return
+     */
+    private ArrayList<Category> organizeCategories(ArrayList<Category> categories) {
+        // populate subcategory arrays of all categories
+        for (Category category:categories) {
             // populate category with transactions if any exist
             category.updateTransactions();
 
             // add categories to their parent categories, if any
-            for (Category parentCategory: allCategories) {
+            for (Category parentCategory: categories) {
                 if (parentCategory.getId() == category.getParentId()) {
                     parentCategory.addSubcategory(category);
                 }
             }
         }
-
-        // if a categoryId isn't specified, return a list of rootcategories
-        if (categoryId == null) {
-            ArrayList<Category> rootCategories = new ArrayList<>();
-            for (Category category:allCategories){
-                if (category.getParentId() == ROOT) {
-                    rootCategories.add(category);
-                }
-            }
-            return rootCategories;
-        }
-
-        // otherwise, return a list with only the specified category
-        else {
-            ArrayList<Category> singleCategory = new ArrayList<>();
-            for (Category category:allCategories) {
-                if (category.getId() == categoryId) {
-                    singleCategory.add(category);
-                }
-            }
-            return singleCategory;
-        }
+        return categories;
     }
 
     public void updateCategory(Category category) {
@@ -262,6 +285,11 @@ public class DBManager {
         ContentValues values = new ContentValues();
         values.put(DBHelper.TRANSACTION_CATEGORY_ID, transaction.getCategoryId());
         db.update(DBHelper.TABLE_TRANSACTIONS, values, DBHelper.TRANSACTION_ID + " = ?",
+                new String[] {String.valueOf(transaction.getId())});
+    }
+
+    public void deleteTransaction(Transaction transaction) {
+        db.delete(DBHelper.TABLE_TRANSACTIONS, DBHelper.TRANSACTION_ID + " = ?",
                 new String[] {String.valueOf(transaction.getId())});
     }
 }

@@ -4,7 +4,6 @@ package com.example.sander.bunqer.Helpers;
  *
  */
 
-
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -22,6 +21,7 @@ import info.debatty.java.stringsimilarity.NormalizedLevenshtein;
  */
 
 public class CategoryHelper {
+    // Constants for category ID's to be used throughout the app.
     public static final int UNCATEGORIZED = 1;
     public static final int INCOME = 2;
     public static final int EXPENSES = 3;
@@ -31,11 +31,7 @@ public class CategoryHelper {
 
     private static DBManager dbManager;
 
-    private CategoryHelper(){}
-
     static ArrayList<Transaction> categorize(ArrayList<Transaction> newTransactions) {
-        Log.d("log", "start categorize()");
-
         // make sure there is a DBManager instance
         if (dbManager == null) {
             dbManager = DBManager.getInstance();
@@ -98,9 +94,9 @@ public class CategoryHelper {
     }
 
     /**
-     * By removing the location that is appended to pin payments, the accuracy of categorizing them
-     * is improved. Example: "Bakker Bart AMSTERDAM NL" becomes "Bakker Bart" for the duration of
-     * the comparison.
+     * Removes the location that is appended to pin payments, thereby increasing the accuracy of
+     * categorizing them. Example: "Bakker Bart AMSTERDAM NL" becomes "Bakker Bart" for the duration
+     * of the comparison.
      *
      * @param description
      * @return
@@ -135,7 +131,7 @@ public class CategoryHelper {
     /**
      * Checks if a string is all uppercase. Stole it from: https://stackoverflow.com/a/677592
      */
-    public static boolean isUpperCase(String s)
+    private static boolean isUpperCase(String s)
     {
         for (int i=0; i<s.length(); i++)
         {
@@ -147,7 +143,11 @@ public class CategoryHelper {
         return true;
     }
 
-    public static void setupDefaultCategories(Account newAccount) {
+    /**
+     * Sets up the default categories for a new account
+     * @param newAccount
+     */
+    static void setupDefaultCategories(Account newAccount) {
         // make sure there is a DBManager instance
         if (dbManager == null) {
             dbManager = DBManager.getInstance();

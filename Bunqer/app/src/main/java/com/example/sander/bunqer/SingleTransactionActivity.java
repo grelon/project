@@ -1,17 +1,17 @@
 package com.example.sander.bunqer;
+/*
+ * Created by sander on 15-6-17.
+ */
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -21,6 +21,10 @@ import com.example.sander.bunqer.ModelClasses.Category;
 import com.example.sander.bunqer.ModelClasses.Transaction;
 
 import java.util.ArrayList;
+
+/**
+ * Controls the action in the single transaction screen.
+ */
 
 public class SingleTransactionActivity extends AppCompatActivity {
 
@@ -90,6 +94,9 @@ public class SingleTransactionActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Renders a list of categories when the bottom sheet is called.
+     */
     private void showCategories() {
         // get the stubs of the categories
         if(stubCategories.isEmpty()) {
@@ -103,12 +110,14 @@ public class SingleTransactionActivity extends AppCompatActivity {
             stringStubCategories.add(category.getName());
         }
 
+        // set up the listview to change categories
         ArrayAdapter<String> categoriesAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, stringStubCategories);
-
         ListView listView = (ListView) bottomSheetDialog.findViewById(R.id.single_transaction_dialog_categories);
-
         listView.setAdapter(categoriesAdapter);
+        setCategoriesClickListener(listView);
+    }
 
+    private void setCategoriesClickListener(ListView listView) {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -122,7 +131,10 @@ public class SingleTransactionActivity extends AppCompatActivity {
         });
     }
 
-    // go through categories recursively and only gather the stubs
+    /**
+     * Go through categories recursively and only gather the stubs.
+     * @param categories
+     */
     private void getStubs(ArrayList<Category> categories) {
         for (Category category:categories) {
             if (category.getSubcategories().size() > 0) {

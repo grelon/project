@@ -3,18 +3,16 @@ package com.example.sander.bunqer.ModelClasses;
  * Created by sander on 12-6-17.
  */
 
-import android.content.Context;
-
 import com.example.sander.bunqer.DB.DBManager;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Category implements Serializable {
-    /**
-     * Defines category class
-     */
+/**
+ * Defines category class
+ */
 
+public class Category implements Serializable {
     private int id;
     private int accountId;
     private int parentId;
@@ -23,25 +21,33 @@ public class Category implements Serializable {
     private ArrayList<Transaction> transactions;
     private int totalValue;
 
-    // constructors
+    // constructor
     public Category() {
     }
 
+    // constructor used for setup of default categories
     public Category(int accountId, int parentId, String name) {
         this.accountId = accountId;
         this.parentId = parentId;
         this.name = name;
     }
 
-    // constructor used by database
-    public Category(int id, int parentId, int accountId, String name) {
-        this.id = id;
-        this.accountId = accountId;
-        this.parentId = parentId;
-        this.name = name;
+    /**
+     * Updates the transactions with a fresh list from the DB.
+     */
+    public void updateTransactions() {
+        // if transactions have not yet been initialized
+        if (transactions == null) {
+            transactions = new ArrayList<>();
+        }
+
+        // iterate over every transaction and add them if they belong to this category
+        transactions.clear();
+        for (Transaction transaction:DBManager.getInstance().readTransactions(id)) {
+            transactions.add(transaction);
+        }
     }
 
-    // setters & getters
     public ArrayList<Category> getSubcategories() {
         return subcategories;
     }
@@ -120,20 +126,6 @@ public class Category implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    // other
-    public void updateTransactions() {
-        // if transactions have not yet been initialized
-        if (transactions == null) {
-            transactions = new ArrayList<>();
-        }
-
-        // iterate over every transaction and add them if they belong to this category
-        transactions.clear();
-        for (Transaction transaction:DBManager.getInstance().readTransactions(id)) {
-            transactions.add(transaction);
-        }
     }
 
     @Override

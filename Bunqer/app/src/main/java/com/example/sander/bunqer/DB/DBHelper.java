@@ -62,7 +62,6 @@ class DBHelper extends SQLiteOpenHelper {
                     TRANSACTION_COUNTERPARTY_NAME + " TEXT, " +
                     TRANSACTION_DESCRIPTION + " TEXT NOT NULL);";
 
-
     /* Accounts table */
     // table name
     static final String TABLE_ACCOUNTS = "accounts";
@@ -79,8 +78,6 @@ class DBHelper extends SQLiteOpenHelper {
                     ACCOUNT_NUMBER + " TEXT NOT NULL, " +
                     ACCOUNT_NAME + " TEXT NOT NULL);";
 
-
-    /* Create, upgrade and get database */
     // DON'T use this constructor to instantiate dbHelper!
     private DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -106,7 +103,10 @@ class DBHelper extends SQLiteOpenHelper {
     // upgrade database
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // TODO: 12-6-17 Do I need to do something here or not?
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ACCOUNTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CATEGORIES);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRANSACTIONS);
+        onCreate(db);
     }
 
 
