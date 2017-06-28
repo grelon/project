@@ -70,4 +70,10 @@ Spoils of the week:
 **Insights**
 + Copying an array object in Java needs to be done with clone(). However, the immutable attributes of said object are ONLY copied by reference. Thus, clone() doesn't work if you want to deepcopy. Solved this, by not copying the object at all, but copying it's attributes.
 
+# 27-6
+**Insights**
++ CardViews are really easy to use.
++ Linking the colors of the chart to the slice content is not as easy as it should be. It probably won't work before the end of the week so it is wiped from the list.
++ It would have been way more efficient to create just one root category that contains "Income", "Expenses", "Uncategorized", that in turn contain their subcategories. This would have made reading from the DB a lot easier.
+
 
