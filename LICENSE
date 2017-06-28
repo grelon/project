@@ -1,25 +1,3 @@
-[![BCH compliance](https://bettercodehub.com/edge/badge/grelon/project?branch=master)](https://bettercodehub.com/)  
-
-# Bunqer
-Final project for Minor Programmeren  
-By Sander Swierts
-  
-This app gives an overview of what you spend your money on if you are a Bunq customer. Categorize new transactions once and after that, they are categorized automatically. Also, by working closely together with the Bunq app, it is fairly easy to import any new transactions.  
-
-Disclaimer: Me nor this project is affiliated with Bunq. I am merely an enthousiastic customer.  
-
-## Screenshots  
-![screenshot1](/doc/screenshot1.png)
-![screenshot2](/doc/screenshot2.png)
-![screenshot3](/doc/screenshot3.png)
-![screenshot4](/doc/screenshot4.png)
-![screenshot5](/doc/screenshot5.png)
-
-## External components  
-+ The [MPAndroidChart](https://github.com/PhilJay/MPAndroidChart) library is used for the charts within the app.
-+ The [java-string-similarity](https://github.com/tdebatty/java-string-similarity) library is used to categorize new transactions.
-
-## License
 MIT License
 
 Copyright (c) 2017 Sander Swierts
