@@ -7,21 +7,18 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-class DBHelper extends SQLiteOpenHelper {
+/**
+ * Defines how the database is to be created and how one could get an instance of it.
+ */
 
-    /* Statics */
-    // empty instance to be filled
+class DBHelper extends SQLiteOpenHelper {
     private static DBHelper dbHelper;
     private static SQLiteDatabase db;
 
-    // database name
-    public static final String DATABASE_NAME = "MyApp.db";
-
-    // database version
+    private static final String DATABASE_NAME = "MyApp.db";
     private static final int DATABASE_VERSION = 1;
 
-
-    /* Definition of categories table */
+    /* Categories table */
     // table name
     static final String TABLE_CATEGORIES = "categories";
 
@@ -30,7 +27,6 @@ class DBHelper extends SQLiteOpenHelper {
     static final String CATEGORY_ACCOUNT_ID = "account_id";
     static final String CATEGORY_PARENT_ID = "parent_id";
     static final String CATEGORY_NAME = "name";
-    // TODO: 12-6-17 Maybe integrate filters within table with their own column?
 
     // table creation query
     private static final String CREATE_CATEGORIES_TABLE =
@@ -40,8 +36,7 @@ class DBHelper extends SQLiteOpenHelper {
                     CATEGORY_PARENT_ID + " INTEGER NOT NULL, " +
                     CATEGORY_NAME + " TEXT NOT NULL);";
 
-
-    /* Definition of transactions table */
+    /* Transactions table */
     // table name
     static final String TABLE_TRANSACTIONS = "transactions";
 
@@ -68,7 +63,7 @@ class DBHelper extends SQLiteOpenHelper {
                     TRANSACTION_DESCRIPTION + " TEXT NOT NULL);";
 
 
-    /* Definition of accounts table */
+    /* Accounts table */
     // table name
     static final String TABLE_ACCOUNTS = "accounts";
 
@@ -85,14 +80,19 @@ class DBHelper extends SQLiteOpenHelper {
                     ACCOUNT_NAME + " TEXT NOT NULL);";
 
 
-    /**
-     * Methods for instantiation and upgrading of db
-     * and dbHelper
-     */
-
+    /* Create, upgrade and get database */
     // DON'T use this constructor to instantiate dbHelper!
     private DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
+    // use getInstance() to instantiate dbHelper
+    static synchronized DBHelper getInstance() {
+        if (dbHelper == null) {
+            dbHelper = new DBHelper(MyApp.getContext());
+        }
+        db = dbHelper.getWritableDatabase();
+        return dbHelper;
     }
 
     // create database
@@ -109,12 +109,5 @@ class DBHelper extends SQLiteOpenHelper {
         // TODO: 12-6-17 Do I need to do something here or not?
     }
 
-    // use getInstance() to instantiate dbHelper
-    static synchronized DBHelper getInstance() {
-        if (dbHelper == null) {
-            dbHelper = new DBHelper(MyApp.getContext());
-        }
-        db = dbHelper.getWritableDatabase();
-        return dbHelper;
-    }
+
 }

@@ -4,12 +4,15 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.sander.bunqer.DB.DBManager;
 import com.example.sander.bunqer.Helpers.CategoryHelper;
 import com.example.sander.bunqer.Helpers.ChartHelper;
+import com.example.sander.bunqer.Helpers.CsvImportHelper;
 import com.example.sander.bunqer.Helpers.CurrencyFormatter;
 import com.example.sander.bunqer.ModelClasses.Category;
+import com.example.sander.bunqer.ModelClasses.Transaction;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
@@ -35,11 +38,32 @@ public class ChartActivity extends AppCompatActivity implements OnChartValueSele
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chart);
 
-        // get chart and charthelper
+        // when new transactions are shared, import them first
+        importNew();
+
+
+        // get chart charthelper
         mPieChart = (PieChart) findViewById(R.id.monthChart);
         mChartHelper = new ChartHelper(getApplicationContext(), this);
 
         buildChart();
+    }
+
+    private void importNew() throws NullPointerException {
+        try {
+            if (getIntent().getAction().equals("android.intent.action.SEND") &&
+                    getIntent().normalizeMimeType(getIntent().getType()).equals("text/csv")) {
+                // import new transactions and return them in a transaction list
+                ArrayList<Transaction> transactions = CsvImportHelper.getTransactionList(getApplicationContext(), getIntent());
+
+                // notify users of number new transactions
+                if (transactions.size() > 1) {
+                    Toast.makeText(this, transactions.size() + " new transactions added.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        } catch (NullPointerException e) {
+            // apparently there is no data to import, so just move on.
+        }
     }
 
     private void buildChart() {

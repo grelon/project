@@ -2,7 +2,6 @@ package com.example.sander.bunqer.Helpers;
 /*
  * Created by sander on 12-6-17.
  *
- * Sorts transactions into categories and actually writes them to the database for the first time.
  */
 
 
@@ -17,6 +16,10 @@ import com.example.sander.bunqer.ModelClasses.Transaction;
 import java.util.ArrayList;
 
 import info.debatty.java.stringsimilarity.NormalizedLevenshtein;
+
+/**
+ * Contains helper methods to categorize transactions into the database.
+ */
 
 public class CategoryHelper {
     public static final int UNCATEGORIZED = 1;
@@ -44,6 +47,7 @@ public class CategoryHelper {
         ArrayList<String> preparedExistingDescriptions =
                 prepareDescriptions(existingTransactions);
 
+        // more info: 
         NormalizedLevenshtein normalizedLevenshtein = new NormalizedLevenshtein();
 
         for (int i = 0; i < preparedNewDescriptions.size(); i++) {
@@ -74,9 +78,7 @@ public class CategoryHelper {
     }
 
     /**
-     * Prepares transactions for comparison by removing unnecassary characters from description.
-     * Truncates all characters after '\', which is used primarily in 'BETAALAUTOMAAT' payments.
-     * The part before '\' differs most, and is used for string comparison.
+     * Returns a list of transaction descriptions optimized for categorization.
      *
      * @param transactions
      * @return
@@ -95,6 +97,14 @@ public class CategoryHelper {
         return preparedDescriptions;
     }
 
+    /**
+     * By removing the location that is appended to pin payments, the accuracy of categorizing them
+     * is improved. Example: "Bakker Bart AMSTERDAM NL" becomes "Bakker Bart" for the duration of
+     * the comparison.
+     *
+     * @param description
+     * @return
+     */
     private static String formatTransactionDescription(String description) {
         String[] words = description.split(" ");
         ArrayList<String> newWords = new ArrayList<>();
@@ -120,6 +130,21 @@ public class CategoryHelper {
 
         // return the rebuilt description string for comparison
         return TextUtils.join(" ", newWords);
+    }
+
+    /**
+     * Checks if a string is all uppercase. Stole it from: https://stackoverflow.com/a/677592
+     */
+    public static boolean isUpperCase(String s)
+    {
+        for (int i=0; i<s.length(); i++)
+        {
+            if (!Character.isUpperCase(s.charAt(i)))
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     public static void setupDefaultCategories(Account newAccount) {
@@ -157,20 +182,5 @@ public class CategoryHelper {
         for (Category category: defaultCategories) {
             dbManager.createCategory(category);
         }
-    }
-
-    /**
-     * Checks if a string is all uppercase. Stole it from: https://stackoverflow.com/a/677592
-     */
-    public static boolean isUpperCase(String s)
-    {
-        for (int i=0; i<s.length(); i++)
-        {
-            if (!Character.isUpperCase(s.charAt(i)))
-            {
-                return false;
-            }
-        }
-        return true;
     }
 }

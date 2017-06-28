@@ -55,7 +55,6 @@ public class TransactionListActivity extends AppCompatActivity {
             TextView mTvEmptyListNotification = (TextView) findViewById(R.id.transactionlist_empty_list);
             mTvEmptyListNotification.setVisibility(View.VISIBLE);
         }
-
     }
 
     @Override

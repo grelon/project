@@ -37,68 +37,24 @@ public class CsvImportHelper {
      * @return
      */
     public static ArrayList<Transaction> getTransactionList(Context context, Intent receivedIntent) {
-        ArrayList<Transaction> transactions = new ArrayList<>();
+        ArrayList<Transaction> transactions = null;
         dbManager = DBManager.getInstance();
 
         Uri uri = receivedIntent.getClipData().getItemAt(0).getUri();
         if (uri != null) {
-            FileInputStream inputStream;
             try {
-                AssetFileDescriptor descriptor = context.getContentResolver()
-                        .openTypedAssetFileDescriptor(uri, "text/*", null);
-                if (descriptor == null) {
-                    Log.d("log", "descriptor is null");
-                }
-                inputStream = descriptor.createInputStream();
-                InputStreamReader isReader = new InputStreamReader(inputStream, "UTF-8");
-
-                BufferedReader bReader = new BufferedReader(isReader);
+                // get buffered reader object to read the csv line by line
+                BufferedReader bReader = getBufferedReader(context, uri);
 
                 // skip over first line
                 bReader.readLine();
 
-                // for testing
-                int i = 0;
+                // get list with transactions
+                transactions = createTransactionFromCsv(bReader);
 
-                String line;
-                while ((line = bReader.readLine()) != null) {
-
-                    // for testing
-                    Log.d("log", "iteratie: " + i);
-
-                    // general formatting and splitting of line
-                    line = line.replace("\"", "");
-                    Log.d("log", "getTransactionlist.validate: " + line);
-
-                    String[] rowData = line.split(";");
-
-                    // create new transactions using the data
-                    Transaction transaction = new Transaction();
-                    transaction.setDate(rowData[0]);
-                    transaction.setAmount(rowData[1]);
-                    transaction.setAccount(rowData[2]);
-                    transaction.setCounterpartyAccount(rowData[3]);
-                    transaction.setCounterpartyName(rowData[4]);
-                    transaction.setDescription(rowData[5].replaceAll("[^a-zA-Z\\d\\s]", ""));
-                    transaction.setAccountId(getAccountId(transaction));
-
-                    // don't add if identical transaction already exists
-                    if (transaction.isNotDuplicate()) {
-                        transactions.add(transaction);
-                    }
-
-                    Log.d("log", "getTransactionlist: transactions: " + transactions.toString());
-
-                    // for testing
-                    i++;
-                }
-                // categorize transactions
-                Log.d("log","completing import");
+                // categorize and return transactions
                 return CategoryHelper.categorize(transactions);
-
-            } catch (NullPointerException e) {
-                Log.w("ClipData", "Failure to create stream");
-            } catch (IOException e) {
+            } catch (NullPointerException | IOException e) {
                 e.printStackTrace();
             }
         }
@@ -108,7 +64,69 @@ public class CsvImportHelper {
         return transactions;
     }
 
-    public static int getAccountId(Transaction transaction) {
+    /**
+     * Returns transaction list with transactions created from CSV.
+     *
+     * @param bReader
+     * @return
+     * @throws IOException
+     */
+    private static ArrayList<Transaction> createTransactionFromCsv(BufferedReader bReader)
+            throws IOException {
+
+        ArrayList<Transaction> transactions = new ArrayList<>();
+
+        String line;
+        while ((line = bReader.readLine()) != null) {
+            // general formatting and splitting of line
+            line = line.replace("\"", "");
+            String[] rowData = line.split(";");
+
+            // create new transaction using the data
+            Transaction transaction = new Transaction();
+            transaction.setDate(rowData[0]);
+            transaction.setAmount(rowData[1]);
+            transaction.setAccount(rowData[2]);
+            transaction.setCounterpartyAccount(rowData[3]);
+            transaction.setCounterpartyName(rowData[4]);
+            transaction.setDescription(rowData[5].replaceAll("[^a-zA-Z\\d\\s]", ""));
+            transaction.setAccountId(getAccountId(transaction));
+
+            // don't add if identical transaction already exists
+            if (transaction.isNotDuplicate()) {
+                transactions.add(transaction);
+            }
+        }
+        return transactions;
+    }
+
+    /**
+     * Returns a BufferedReader to read the contents of the CSV line by line.
+     *
+     * @param context
+     * @param uri
+     * @return
+     * @throws IOException
+     */
+    private static BufferedReader getBufferedReader(Context context, Uri uri) throws IOException {
+        AssetFileDescriptor descriptor = context.getContentResolver()
+                .openTypedAssetFileDescriptor(uri, "text/*", null);
+        if (descriptor == null) {
+            Log.e("error", "descriptor is null");
+        }
+        FileInputStream inputStream = descriptor.createInputStream();
+        InputStreamReader isReader = new InputStreamReader(inputStream, "UTF-8");
+
+        return new BufferedReader(isReader);
+    }
+
+    /**
+     * Checks if the account associated with the transaction already exists in the DB.
+     *
+     * @param transaction
+     * @return
+     */
+    private static int getAccountId(Transaction transaction) {
         // check if account already exists
         ArrayList<Account> accounts = dbManager.readAccounts();
         for (Account account: accounts) {
@@ -123,6 +141,13 @@ public class CsvImportHelper {
         return newAccount.getId();
     }
 
+    /**
+     * Sets up new account in DB if the account associated with the transaction doesn't exist yet.
+     * Also makes a call to set up the default categories for the new account.
+     *
+     * @param transaction
+     * @return
+     */
     private static Account setupAccount(Transaction transaction) {
         // create account
         Account account = new Account(transaction.getAccount(), transaction.getAccount());
@@ -134,6 +159,7 @@ public class CsvImportHelper {
 
         CategoryHelper.setupDefaultCategories(newAccount);
 
+        // return an instance of the new account
         return accounts.get(accounts.size()-1);
     }
 }

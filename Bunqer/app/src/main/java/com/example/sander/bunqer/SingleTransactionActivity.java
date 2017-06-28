@@ -24,8 +24,8 @@ import java.util.ArrayList;
 
 public class SingleTransactionActivity extends AppCompatActivity {
 
-    Transaction transaction;
-    TextView tvSingleTransactionCategory;
+    private Transaction transaction;
+    private TextView tvSingleTransactionCategory;
     private int originalCategoryId;
 
     View bottomSheetView;
@@ -45,6 +45,24 @@ public class SingleTransactionActivity extends AppCompatActivity {
         // remember its category
         originalCategoryId = transaction.getCategoryId();
 
+        // find views and set their contents
+        setViews();
+
+        // bottom sheet dialog setup
+        bottomSheetView = getLayoutInflater().inflate(R.layout.bottomsheetdialog_change_category, null);
+        bottomSheetDialog = new BottomSheetDialog(this);
+        bottomSheetDialog.setContentView(bottomSheetView);
+        bottomSheetBehavior = BottomSheetBehavior.from((View) bottomSheetView.getParent());
+
+        bottomSheetDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                showCategories();
+            }
+        });
+    }
+
+    private void setViews() {
         // get views
         TextView tvSingleTransactionCounterpartyName = (TextView) findViewById(R.id.single_transaction_counterpartyName);
         TextView tvSingleTransactionCounterpartyAccount = (TextView) findViewById(R.id.single_transaction_counterpartyAccount);
@@ -62,19 +80,7 @@ public class SingleTransactionActivity extends AppCompatActivity {
         tvSingleTransactionDescription.setText(transaction.getDescription());
         tvSingleTransactionCategory.setText(transaction.getCategory());
 
-        // bottom sheet dialog setup
-        bottomSheetView = getLayoutInflater().inflate(R.layout.bottomsheetdialog_change_category, null);
-        bottomSheetDialog = new BottomSheetDialog(this);
-        bottomSheetDialog.setContentView(bottomSheetView);
-        bottomSheetBehavior = BottomSheetBehavior.from((View) bottomSheetView.getParent());
-
-        bottomSheetDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-                showCategories();
-            }
-        });
-
+        // set onClickListener for the change category button
         ibSingleTransactionChangeCategory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

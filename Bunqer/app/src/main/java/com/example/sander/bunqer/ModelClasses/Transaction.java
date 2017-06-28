@@ -12,6 +12,10 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
+/**
+ * Defines the Transaction class and a few related methods.
+ */
+
 public class Transaction implements Serializable, Cloneable{
     private int id;
     private String date;
@@ -24,23 +28,8 @@ public class Transaction implements Serializable, Cloneable{
     private String counterpartyAccount;
     private String description;
 
-    // constructor for CSV import
+    // constructor
     public Transaction() {
-    }
-
-    // constructor for DB
-    public Transaction(int id, String date, int amount, int accountId, String account,
-                       int categoryId, String counterpartyName,
-                       String counterpartyAccount, String description) {
-        this.id = id;
-        this.date = date;
-        this.amount = amount;
-        this.accountId = accountId;
-        this.account = account;
-        this.categoryId = categoryId;
-        this.counterpartyName = counterpartyName;
-        this.counterpartyAccount = counterpartyAccount;
-        this.description = description;
     }
 
     public int getId() {
@@ -105,6 +94,7 @@ public class Transaction implements Serializable, Cloneable{
     }
 
     public void setAmount(String amount) {
+        // standardizes amount format when setting it using a string
         this.amount = Integer.parseInt((amount.replace(".","").replace(",","")));
     }
 
@@ -152,11 +142,19 @@ public class Transaction implements Serializable, Cloneable{
                 '}';
     }
 
+    /**
+     * Returns amount formatted as an amount in euros.
+     * @return
+     */
     public String getFormattedAmount() {
         NumberFormat format = NumberFormat.getCurrencyInstance(Locale.GERMANY);
         return format.format(amount/100);
     }
 
+    /**
+     * Returns false if a transaction already exists in the DB.
+     * @return
+     */
     public boolean isNotDuplicate() {
         ArrayList<Transaction> transactions = DBManager.getInstance().readTransactions(null);
 
@@ -168,13 +166,12 @@ public class Transaction implements Serializable, Cloneable{
                         transaction.getDescription().equals(this.description) &&
                         transaction.getCounterpartyAccount().equals(this.counterpartyAccount)) {
 
-                    Log.d("log", "isnotduplicate: false");
                     // transaction is a duplicate
                     return false;
                 }
             }
         }
-        Log.d("log", "isnotduplicate: true");
+
         // transaction is not a duplicate
         return true;
     }

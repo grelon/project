@@ -35,22 +35,7 @@ public class ImportActivity extends AppCompatActivity {
         // get textview
         textView = (TextView) findViewById(R.id.tvTest);
 
-        if (getIntent().getAction().equals("android.intent.action.SEND") &&
-                getIntent().normalizeMimeType(getIntent().getType()).equals("text/csv")) {
-            Log.d("log", "SEND intent with CSV type detected");
 
-            // try to get list of transaction objects
-            transactions = CsvImportHelper.getTransactionList(getApplicationContext(), getIntent());
-
-            Toast.makeText(this, transactions.size() + " new transactions added.", Toast.LENGTH_LONG).show();
-            sendToMonth();
-
-            // testing grounds
-//            dbManager = DBManager.getInstance();
-//            Log.d("log", "accounts: " + dbManager.readAccounts().toString());
-//            Log.d("log", "categories: " + dbManager.readCategories(null).toString());
-//            Log.d("log", "transactions: " + dbManager.readTransactions(null).toString());
-        }
     }
 
     public void sendToMonth() {
