@@ -13,10 +13,8 @@ public class Account {
     private String name;
 
     // constructors
-    public Account(int id, String account_number, String name) {
-        this.id = id;
-        this.number = account_number;
-        this.name = name;
+    // for constructing from database
+    public Account() {
     }
 
     public Account(String account_number, String name) {

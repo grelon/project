@@ -61,13 +61,13 @@ public class DBManager {
         // move over rows with cursor
         if (cursor.moveToFirst()) {
             do {
-                // get needed data from current row
-                int id = cursor.getInt(cursor.getColumnIndex(DBHelper.ACCOUNT_ID));
-                String number = cursor.getString(cursor.getColumnIndex(DBHelper.ACCOUNT_NUMBER));
-                String name = cursor.getString(cursor.getColumnIndex(DBHelper.ACCOUNT_NAME));
+                // create account from data
+                Account account = new Account();
+                account.setId(cursor.getInt(cursor.getColumnIndex(DBHelper.ACCOUNT_ID)));
+                account.setNumber(cursor.getString(cursor.getColumnIndex(DBHelper.ACCOUNT_NUMBER)));
+                account.setName(cursor.getString(cursor.getColumnIndex(DBHelper.ACCOUNT_NAME)));
 
-                // create category object with data
-                Account account = new Account(id, number, name);
+                // add account to account list
                 accounts.add(account);
             }
             // until end of cursor object has been reached
@@ -115,15 +115,14 @@ public class DBManager {
         // move over rows with cursor
         if (cursor.moveToFirst()) {
             do {
-                // get needed data from current row
-                int id = cursor.getInt(cursor.getColumnIndex(DBHelper.CATEGORY_ID));
-                int accountId = cursor.getInt(cursor.getColumnIndex(DBHelper.CATEGORY_ACCOUNT_ID));
-                int parentId = cursor.getInt(cursor.getColumnIndex(DBHelper.CATEGORY_PARENT_ID));
-                String name = cursor.getString(cursor.getColumnIndex(DBHelper.CATEGORY_NAME));
+                // create category object from data
+                Category category = new Category();
+                category.setId(cursor.getInt(cursor.getColumnIndex(DBHelper.CATEGORY_ID)));
+                category.setAccountId(cursor.getInt(cursor.getColumnIndex(DBHelper.CATEGORY_ACCOUNT_ID)));
+                category.setParentId(cursor.getInt(cursor.getColumnIndex(DBHelper.CATEGORY_PARENT_ID)));
+                category.setName(cursor.getString(cursor.getColumnIndex(DBHelper.CATEGORY_NAME)));
 
-                // create category object with data
-                Category category = new Category(id, parentId, accountId, name);
-
+                // add category to list of categories
                 allCategories.add(category);
             }
             // until end of cursor object has been reached
@@ -131,7 +130,7 @@ public class DBManager {
         }
         cursor.close();
 
-        // populate subcategory arrays of categories
+        // populate subcategory arrays of all categories
         for (Category category:allCategories) {
             // populate category with transactions if any exist
             category.updateTransactions();
@@ -139,14 +138,12 @@ public class DBManager {
             // add categories to their parent categories, if any
             for (Category parentCategory: allCategories) {
                 if (parentCategory.getId() == category.getParentId()) {
-
                     parentCategory.addSubcategory(category);
                 }
             }
         }
 
-
-
+        // if a categoryId isn't specified, return a list of rootcategories
         if (categoryId == null) {
             ArrayList<Category> rootCategories = new ArrayList<>();
             for (Category category:allCategories){
@@ -154,9 +151,10 @@ public class DBManager {
                     rootCategories.add(category);
                 }
             }
-
             return rootCategories;
         }
+
+        // otherwise, return a list with only the specified category
         else {
             ArrayList<Category> singleCategory = new ArrayList<>();
             for (Category category:allCategories) {
@@ -164,7 +162,6 @@ public class DBManager {
                     singleCategory.add(category);
                 }
             }
-
             return singleCategory;
         }
     }
@@ -186,7 +183,6 @@ public class DBManager {
         // delete category
         db.delete(DBHelper.TABLE_CATEGORIES, DBHelper.CATEGORY_ID + " = ?",
                 new String[] {String.valueOf(category.getId())});
-
     }
 
     // CRUD: transactions table
@@ -204,7 +200,7 @@ public class DBManager {
 
     /**
      * Returns all transactions if 'null' is given as argument. If categoryId is not null, only rows
-     * with that categoryId will be returned.
+     * with the specified categoryId will be returned.
      *
      * @param categoryId
      * @return
@@ -223,48 +219,37 @@ public class DBManager {
             DBHelper.TRANSACTION_COUNTERPARTY_NAME,
             DBHelper.TRANSACTION_DESCRIPTION };
 
-
+        // create cursor object to read all previously defined columns...
         Cursor cursor;
         if (categoryId == null) {
-            // create cursor object to read previously defined columns
+            // ... that exist
             cursor = db.query(DBHelper.TABLE_TRANSACTIONS, columns, null, null, null, null, null);
         }
         else {
-            // create cursor object to read previously defined columns only where categoryId is categoryID
+            // ... only where categoryId is categoryID
             cursor = db.query(DBHelper.TABLE_TRANSACTIONS, columns,
                     DBHelper.TRANSACTION_CATEGORY_ID + " = ?", new String[]{categoryId.toString()},
                     null, null, null);
         }
 
-
-        // move over rows with cursor
+        // move over rows with cursor, until end of cursor object has been reached
         if (cursor.moveToFirst()) {
             do {
-                // get needed data from current row
-                int id = cursor.getInt(cursor.getColumnIndex(DBHelper.TRANSACTION_ID));
-                int catId = cursor.getInt(cursor.getColumnIndex(DBHelper.TRANSACTION_CATEGORY_ID));
-                int accountId = cursor.getInt(cursor.getColumnIndex(DBHelper.TRANSACTION_ACCOUNT_ID));
-                String accountName = readAccounts().get(accountId-1).getName();
-                String date = cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_DATE));
-                int amount = cursor.getInt(cursor.getColumnIndex(DBHelper.TRANSACTION_AMOUNT));
-                String counterpartyAccount = cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_COUNTERPARTY_ACCOUNT));
-                String counterpartyName = cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_COUNTERPARTY_NAME));
-                String description = cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_DESCRIPTION));
+                // create transaction object from data
+                Transaction transaction = new Transaction();
+                transaction.setId(cursor.getInt(cursor.getColumnIndex(DBHelper.TRANSACTION_ID)));
+                transaction.setCategoryId(cursor.getInt(cursor.getColumnIndex(DBHelper.TRANSACTION_CATEGORY_ID)));
+                transaction.setAccountId(cursor.getInt(cursor.getColumnIndex(DBHelper.TRANSACTION_ACCOUNT_ID)));
+                transaction.setAccount(readAccounts().get(transaction.getAccountId()-1).getName());
+                transaction.setDate(cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_DATE)));
+                transaction.setAmount(cursor.getInt(cursor.getColumnIndex(DBHelper.TRANSACTION_AMOUNT)));
+                transaction.setCounterpartyAccount(cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_COUNTERPARTY_ACCOUNT)));
+                transaction.setCounterpartyName(cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_COUNTERPARTY_NAME)));
+                transaction.setDescription(cursor.getString(cursor.getColumnIndex(DBHelper.TRANSACTION_DESCRIPTION)));
 
-                // create category object with data
-                Transaction transaction = new Transaction(
-                        id,
-                        date,
-                        amount,
-                        accountId,
-                        accountName,
-                        catId,
-                        counterpartyName,
-                        counterpartyAccount,
-                        description);
+                // add transaction to transactionlist
                 transactions.add(transaction);
             }
-            // until end of cursor object has been reached
             while (cursor.moveToNext());
         }
 
