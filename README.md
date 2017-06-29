@@ -1,10 +1,11 @@
 [![BCH compliance](https://bettercodehub.com/edge/badge/grelon/project?branch=master)](https://bettercodehub.com/)  
 
 # Bunqer
-Final project for Minor Programmeren  
-By Sander Swierts
+*By Sander Swierts*  
+
+Final project for Minor Programmeren
   
-This app gives an overview of what you spend your money on if you are a Bunq customer. Categorize new transactions once and after that, they are categorized automatically. Also, by working closely together with the Bunq app, it is fairly easy to import any new transactions.  
+This app gives an overview of what you spend your money on if you are a Bunq customer. Categorize new transactions once and after that, they are categorized automatically. Simply share a CSV (semi-colon seperated) of your transaction statement with this app and you're good to go.
 
 Disclaimer: Me nor this project is affiliated with Bunq. I am merely an enthousiastic customer.  
 

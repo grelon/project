@@ -5,7 +5,6 @@ package com.example.sander.bunqer.Helpers;
  */
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.example.sander.bunqer.DB.DBManager;
 import com.example.sander.bunqer.ModelClasses.Account;

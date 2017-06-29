@@ -18,6 +18,10 @@ import com.example.sander.bunqer.ModelClasses.Transaction;
 
 import java.util.ArrayList;
 
+/**
+ * Adapts a list of transactions for the recycler view that lives in the TransactionListActivity
+ */
+
 class TransactionRecyclerAdapter extends RecyclerView.Adapter<TransactionRecyclerAdapter.TransactionHolder> {
 
     private static Activity mActivity;
